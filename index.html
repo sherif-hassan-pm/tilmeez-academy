@@ -105,16 +105,14 @@ const addN=()=>act(async()=>{if(!val("nti"))return;const {error}=await sb.from("
 const delN=id=>act(async()=>{const {error}=await sb.from("news").delete().eq("id",id);if(error)throw error});
 const addUser=()=>act(async()=>{const u=val("tu").trim().toLowerCase(),p=val("tp"),n=val("tn").trim();
  if(!/^[a-z0-9_]{3,20}$/.test(u))return alert(t("baduser"));if(p.length<6)return alert(t("short"));
- const c2=supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:false,autoRefreshToken:false,storageKey:"tmp"}});
- const {data,error}=await c2.auth.signUp({email:EM(u),password:p,options:{data:{full_name:n||u}}});if(error)throw error;
- const {error:e2}=await sb.from("profiles").update({role:val("tr"),full_name:n||u}).eq("id",data.user.id);if(e2)throw e2;alert(t("created")+": "+u)});
-function openSub(s){sj=s;tab="subjects";render();scrollTo(0,0)}
+ const {error}=await sb.rpc("admin_create_user",{p_username:u,p_password:p,p_name:n,p_role:val("tr")});
+ if(error)throw new Error(/taken/.test(error.message)?t("taken"):error.message);alert(t("created")+": "+u)});function openSub(s){sj=s;tab="subjects";render();scrollTo(0,0)}
 function bookSub(s){if(!ME){mode="login";tab="account";sj=null;render();return}tab="book";sj=s;render()}
 const subjSel=(id,sel)=>`<select id="${id}">${SUBJ.map(s=>`<option value="${s}" ${s==sel?"selected":""}>${t(s)}</option>`).join("")}</select>`;
 const sel=(id,a)=>`<select id="${id}">${a.map(x=>`<option value="${x.id}">${esc(nm(x))}</option>`).join("")}</select>`;
 async function vHome(){const news=await q(sb.from("news").select("*").order("created_at",{ascending:false}).limit(2));
  const nw=`<h2>${t("latest")}</h2>${news.map(newsCard).join("")}<button class="btn alt" onclick="go('news')">${t("allNews")}</button>`;
- if(!ME)return `<div class="hero"><h1>${t("hero")}</h1><p>${t("heroP")}</p><button class="btn y" onclick="mode='reg';go('account')">${t("start")}</button><button class="btn ghost" onclick="go('subjects')">${t("browse")}</button></div>
+ if(!ME)return `<div class="hero"><h1>${t("hero")}</h1><p>${t("heroP")}</p><button class="btn y" onclick="mode='login';go('account')">${t("login")}</button><button class="btn ghost" onclick="go('subjects')">${t("browse")}</button></div>
  <h2>${t("subjects")}</h2><div class="subs">${SUBJ.map((s,i)=>`<div class="sub c${i}" onclick="openSub('${s}')"><span class="ic">${ICON[s]}</span><div><b>${t(s)}</b></div></div>`).join("")}</div>${nw}`;
  let extra="";
  if(ME.role=="student"){const s=await q(sb.from("submissions").select("marks,assignments(max_marks)").eq("student_id",ME.id).not("marks","is",null));
@@ -131,10 +129,10 @@ async function vSubjects(){
 async function vNews(){const n=await q(sb.from("news").select("*").order("created_at",{ascending:false}));const adm=ME&&ME.role=="admin";
  return `<h2>${t("news")}</h2>`+n.map(x=>newsCard(x)+(adm?`<button class="btn sm red" onclick="delN('${x.id}')">${t("del")}</button>`:"")).join("")+
  (adm?`<div class="card"><h3>${t("post")}</h3><input id="nti" placeholder="${t("title")}"><textarea id="ntx" placeholder="${t("body")}"></textarea><button class="btn" onclick="addN()">${t("post")}</button></div>`:"")}
-function vAccount(){const reg=mode=="reg";return `<div class="card"><h3>${reg?t("newAcc"):t("login")}</h3>
+function vAccount(){const reg=false;return `<div class="card"><h3>${reg?t("newAcc"):t("login")}</h3>
  ${reg?`<input id="fn" placeholder="${t("fullname")}">`:""}<input id="un" placeholder="${t("username")}" autocapitalize="none" autocomplete="username"><input id="pw" type="password" placeholder="${t("password")}" autocomplete="${reg?"new-password":"current-password"}">
  ${msg?`<p class="err">${esc(msg)}</p>`:""}<button class="btn" onclick="${reg?"doRegister()":"doLogin()"}">${reg?t("register"):t("login")}</button>
- <button class="btn alt" onclick="mode='${reg?"login":"reg"}';msg='';render()">${reg?t("login"):t("register")}</button></div>`}
+ </div>`}
 async function vBook(){const tc=await q(sb.from("profiles").select("id,full_name,username").eq("role","teacher"));
  return `<div class="card"><h3>${t("book")}</h3>${t("subject")}${subjSel("sj",sj)}${t("teacherL")}${sel("tc",tc)}${t("slot")}<input id="sl" type="datetime-local"><textarea id="nt" placeholder="${t("note")}"></textarea><button class="btn" onclick="addReq()">${t("send")}</button></div>`}
 const reqCard=(r,act)=>`<div class="card"><b>${ICON[r.subj]} ${t(r.subj)}</b> ${tag(r.status)}<br><small>${esc(nm(r.s))} / ${esc(nm(r.t))} / ${esc(String(r.slot).replace("T"," "))}</small>${r.note?`<p>${esc(r.note)}</p>`:""}${r.reply?`<p>✉ ${esc(r.reply)}</p>`:""}
