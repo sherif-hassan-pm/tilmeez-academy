@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0f766e">
+<link rel="manifest" href="manifest.json"><link rel="icon" href="icon.svg">
+<title>أكاديمية تلميذ | Tilmeez Academy</title>
+<style>
+:root{--g:#0f766e;--b:#1e3a8a;--y:#fbbf24;--bg:#f4f7fb;--ink:#0f172a;--mut:#64748b}
+*{box-sizing:border-box}body{margin:0;font-family:Tahoma,"Segoe UI",system-ui,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+button,select,input,textarea{font:inherit}
+header{background:linear-gradient(135deg,var(--g),var(--b));color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5}
+.logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:18px;cursor:pointer}.logo i{font-style:normal;background:var(--y);color:#1e293b;border-radius:10px;width:32px;height:32px;display:grid;place-items:center}
+.btn{background:var(--g);color:#fff;border:0;border-radius:12px;padding:10px 16px;cursor:pointer;margin:2px;font-weight:600}
+.btn.alt{background:#e2e8f0;color:var(--ink)}.btn.red{background:#b91c1c}.btn.y{background:var(--y);color:#1e293b}.btn.sm{padding:6px 11px;font-size:13px;border-radius:9px}.btn.ghost{background:#ffffff26;color:#fff}
+main{max-width:760px;margin:auto;padding:12px 14px 90px}
+.hero{background:linear-gradient(135deg,#0b1f3a,var(--b) 55%,var(--g));color:#fff;border-radius:22px;padding:26px 20px;margin:8px 0 14px;position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;left:-40px;top:-40px;width:160px;height:160px;border-radius:50%;background:#fbbf2426}
+.hero h1{margin:0 0 8px;font-size:26px;line-height:1.3}.hero p{margin:0 0 16px;opacity:.9;line-height:1.7}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}.stats div{background:#ffffff1f;border-radius:12px;padding:8px;text-align:center;font-size:12px}.stats b{display:block;font-size:20px;color:var(--y)}
+.card{background:#fff;border-radius:16px;padding:14px;margin:10px 0;box-shadow:0 2px 10px #0f172a14}
+h2{margin:18px 4px 6px;font-size:19px}h3{margin:4px 0 6px}
+.subs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sub{border-radius:18px;padding:16px 12px;color:#fff;cursor:pointer;min-height:130px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 4px 12px #0f172a22}
+.sub .ic{font-size:34px}.sub b{font-size:17px}.sub small{color:#fff;opacity:.9}
+.c0{background:linear-gradient(135deg,#0f766e,#14b8a6)}.c1{background:linear-gradient(135deg,#1e3a8a,#3b82f6)}.c2{background:linear-gradient(135deg,#7c3aed,#a78bfa)}.c3{background:linear-gradient(135deg,#c2410c,#fb923c)}
+.news{border-right:5px solid var(--y)}.news small,small{color:var(--mut)}
+.tag{display:inline-block;border-radius:99px;padding:2px 10px;font-size:12px;background:#e2e8f0}
+.pending{background:#fde68a}.approved,.present{background:#bbf7d0}.declined,.absent{background:#fecaca}
+input,select,textarea{width:100%;padding:11px;border:1.5px solid #cbd5e1;border-radius:12px;margin:4px 0 8px;background:#fff}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--g);border-color:var(--g)}
+nav{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;border-top:1px solid #e2e8f0;box-shadow:0 -4px 14px #0f172a12;z-index:5}
+nav button{flex:1;border:0;background:none;padding:8px 2px 10px;font-size:11.5px;cursor:pointer;color:var(--mut);display:flex;flex-direction:column;align-items:center;gap:2px}
+nav button span{font-size:20px}nav button.on{color:var(--g);font-weight:700}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}.grid3 b{font-size:26px;display:block;color:var(--g)}
+.lesson{display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid #eef2f7}.lesson:last-child{border:0}.lesson i{font-style:normal;background:#e6f4f1;border-radius:10px;width:34px;height:34px;display:grid;place-items:center;color:var(--g);font-weight:700}
+.back{background:none;border:0;color:var(--g);font-weight:700;cursor:pointer;padding:6px 2px}
+.foot{text-align:center;color:var(--mut);font-size:12px;margin:18px 0}
+</style></head><body>
+<header><div class="logo" onclick="go('home')"><i>✦</i><span id="title"></span></div><span><button class="btn ghost sm" onclick="toggleLang()">EN / عربي</button> <button class="btn ghost sm" id="out" onclick="logout()"></button></span></header>
+<main id="app"></main><nav id="nav"></nav>
+<script>
+const T={ar:{app:"أكاديمية تلميذ",tag:"تعلّم بنور المعرفة",hero:"تعليم أونلاين مع أفضل المدرسين",heroP:"لغة عربية، إنجليزية، علوم إسلامية ودراسات اجتماعية. احجز حصتك واتعلم من بيتك.",
+start:"سجّل واحجز حصة",browse:"استكشف المواد",login:"دخول",logout:"خروج",name:"الاسم",enter:"دخول",register:"حساب جديد",asRole:"الدخول كـ",
+home:"الرئيسية",subjects:"المواد",news:"الإعلانات",account:"حسابي",book:"حجز حصة",mine:"حصصي",mats:"المواد",asg:"الواجبات",att:"الحضور",reqs:"الطلبات",students:"الطلاب",teachers:"المدرسين",
+student:"طالب",teacher:"مدرس",admin:"أدمن",ar:"اللغة العربية",en:"اللغة الإنجليزية",is:"العلوم الإسلامية",so:"الاجتماعيات",
+subject:"المادة",teacherL:"المدرس",slot:"التاريخ والوقت المفضل",note:"ملاحظة للأكاديمية",send:"إرسال الطلب",pending:"قيد الانتظار",approved:"تمت الموافقة",declined:"مرفوض",
+approve:"موافقة",decline:"رفض",reply:"رد",title:"العنوان",link:"رابط أو نص",add:"إضافة",due:"موعد التسليم",present:"حاضر",absent:"غائب",newTeacher:"إضافة مدرس",
+nothing:"لا يوجد شيء بعد",submit:"تسليم الإجابة",answer:"إجابتك",submitted:"تم التسليم",topics:"محتوى المادة",bookThis:"احجز حصة في هذه المادة",backL:"رجوع",
+latest:"آخر الإعلانات",allNews:"كل الإعلانات",post:"نشر إعلان",body:"النص",stT:"مدرس",stS:"مادة",stC:"حصة",demo:"نسخة تجريبية: التلميذات محفوظة على هذا الجهاز فقط.",loginFirst:"سجّل الدخول لحجز حصة",
+lessons:"دروس",free:"متاح للجميع"},
+en:{app:"Tilmeez Academy",tag:"Learn by the light of knowledge",hero:"Online learning with great teachers",heroP:"Arabic, English, Islamic studies and social studies. Book a class and learn from home.",
+start:"Sign up and book a class",browse:"Explore subjects",login:"Log in",logout:"Log out",name:"Name",enter:"Enter",register:"New account",asRole:"Sign in as",
+home:"Home",subjects:"Subjects",news:"News",account:"Account",book:"Book class",mine:"My classes",mats:"Materials",asg:"Assignments",att:"Attendance",reqs:"Requests",students:"Students",teachers:"Teachers",
+student:"Student",teacher:"Teacher",admin:"Admin",ar:"Arabic",en:"English",is:"Islamic Studies",so:"Social Studies",
+subject:"Subject",teacherL:"Teacher",slot:"Preferred date and time",note:"Note to the academy",send:"Send request",pending:"pending",approved:"approved",declined:"declined",
+approve:"Approve",decline:"Decline",reply:"Reply",title:"Title",link:"Link or text",add:"Add",due:"Due date",present:"present",absent:"absent",newTeacher:"Add teacher",
+nothing:"Nothing yet",submit:"Submit answer",answer:"Your answer",submitted:"Submitted",topics:"Subject content",bookThis:"Book a class in this subject",backL:"Back",
+latest:"Latest announcements",allNews:"All announcements",post:"Post announcement",body:"Text",stT:"teachers",stS:"subjects",stC:"classes",demo:"Prototype: data is saved only on this browser.",loginFirst:"Log in to book a class",
+lessons:"lessons",free:"Open to all"}};
+const SUBJ=["ar","en","is","so"],ICON={ar:"✍️",en:"🌍",is:"🕌",so:"🧭"};
+const TOP={ar:{ar:["الحروف والنطق","القراءة والفهم","النحو الأساسي","الإملاء والكتابة","التعبير والمحادثة"],en:["Letters and pronunciation","Reading comprehension","Basic grammar","Spelling and writing","Expression and conversation"]},
+en:{ar:["Phonics and the alphabet","Everyday vocabulary","Grammar and tenses","Reading and writing","Speaking practice"],en:["Phonics and the alphabet","Everyday vocabulary","Grammar and tenses","Reading and writing","Speaking practice"]},
+is:{ar:["تجويد وتلاوة القرآن","حفظ السور القصيرة","السيرة النبوية","الأخلاق والآداب","الفقه المبسط"],en:["Quran recitation and tajweed","Memorizing short surahs","Prophet's biography","Manners and ethics","Simple fiqh"]},
+so:{ar:["الجغرافيا والخرائط","التاريخ","التربية الوطنية","الحضارات والثقافات","مهارات التفكير"],en:["Geography and maps","History","Civics","Civilizations and cultures","Thinking skills"]}};
+let L=localStorage.lang||"ar",U=JSON.parse(localStorage.user||"null"),tab="home",sj=null,mode="login";
+const t=k=>T[L][k]||k;
+const today=new Date().toISOString().slice(0,10);
+let D=JSON.parse(localStorage.db2||"null")||{teachers:[{id:"t1",name:"أ. أحمد",subj:["ar","is"]},{id:"t2",name:"Ms. Sara",subj:["en","so"]}],students:[],
+reqs:[],mats:[{id:1,subj:"en",title:"Week 1 worksheet",link:"https://example.com/worksheet"}],asg:[{id:1,subj:"en",title:"Write 5 sentences about your day",due:"2026-12-05",subs:{}}],att:[],
+news:[{id:1,date:"2026-11-27",ti:"افتتاح التسجيل للفصل الجديد",ti_en:"Registration opens for the new term",tx:"باب التسجيل مفتوح في جميع المواد. احجز حصة تجريبية الآن.",tx_en:"Registration is open in all subjects. Book a trial class now."},
+{id:2,date:"2026-11-25",ti:"حلقات تحفيظ جديدة",ti_en:"New Quran memorization circles",tx:"حلقات مسائية للأطفال من سن 6 إلى 12 سنة.",tx_en:"Evening circles for children aged 6 to 12."},
+{id:3,date:"2026-11-20",ti:"حصص محادثة بالإنجليزية",ti_en:"English conversation classes",tx:"مجموعات صغيرة مع مدرسين متخصصين.",tx_en:"Small groups with specialist teachers."}]};
+const save=()=>localStorage.db2=JSON.stringify(D);
+const uid=()=>Math.random().toString(36).slice(2,8);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const tn=id=>(D.teachers.find(x=>x.id==id)||{}).name||"-";
+const sn=id=>(D.students.find(x=>x.id==id)||{}).name||"-";
+const val=id=>document.getElementById(id).value;
+const go=k=>{tab=k;sj=null;render();scrollTo(0,0)};
+function toggleLang(){L=L=="ar"?"en":"ar";localStorage.lang=L;render()}
+function logout(){U=null;localStorage.removeItem("user");go("home")}
+function login(role){const n=val("nm").trim();if(!n)return alert(t("name"));let id;
+ if(role=="student"){let s=D.students.find(x=>x.name==n);if(!s){s={id:uid(),name:n};D.students.push(s)}id=s.id}
+ else if(role=="teacher"){id=(D.teachers.find(x=>x.name==n)||D.teachers[0]).id}else id="admin";
+ save();U={role,id,name:n};localStorage.user=JSON.stringify(U);go(sj0||"home");sj0=null}
+let sj0=null;
+const subjSel=id=>`<select id="${id}">${SUBJ.map(s=>`<option value="${s}">${t(s)}</option>`).join("")}</select>`;
+const sel=(id,a)=>`<select id="${id}">${a.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join("")}</select>`;
+const tag=s=>`<span class="tag ${s}">${t(s)}</span>`;
+const empty=a=>a.length?"":`<p><small>${t("nothing")}</small></p>`;
+function addReq(){const r={id:uid(),sid:U.id,subj:val("sj"),tid:val("tc"),slot:val("sl"),note:val("nt"),status:"pending",reply:""};if(!r.slot)return alert(t("slot"));D.reqs.push(r);save();go("mine")}
+function setReq(id,s){const r=D.reqs.find(x=>x.id==id);r.status=s;const e=document.getElementById("rp"+id);if(e)r.reply=e.value;save();render()}
+function addMat(){if(!val("mt"))return;D.mats.push({id:uid(),subj:val("ms"),title:val("mt"),link:val("ml")});save();render()}
+function addAsg(){if(!val("at"))return;D.asg.push({id:uid(),subj:val("as"),title:val("at"),due:val("ad"),subs:{}});save();render()}
+function sub(id){D.asg.find(x=>x.id==id).subs[U.id]=val("an"+id);save();render()}
+function mark(sid,st){D.att.push({id:uid(),sid,tid:U.id,date:today,st});save();render()}
+function addT(){if(!val("tnm"))return;D.teachers.push({id:uid(),name:val("tnm"),subj:[val("tsj")]});save();render()}
+function addN(){if(!val("nti"))return;D.news.unshift({id:uid(),date:today,ti:val("nti"),ti_en:val("nti"),tx:val("ntx"),tx_en:val("ntx")});save();render()}
+function openSub(s){sj=s;tab="subjects";render();scrollTo(0,0)}
+function bookSub(s){if(!U){sj0="book";mode="login";tab="account";sj=null;render();return}tab="book";sj=s;render()}
+const mine=()=>D.reqs.filter(r=>U.role=="student"?r.sid==U.id:U.role=="teacher"?r.tid==U.id:true);
+const nTi=n=>L=="ar"?n.ti:n.ti_en,nTx=n=>L=="ar"?n.tx:n.tx_en;
+const newsCard=n=>`<div class="card news"><small>${n.date}</small><h3>${esc(nTi(n))}</h3>${esc(nTx(n))}</div>`;
+const reqCard=(r,act)=>`<div class="card"><b>${ICON[r.subj]} ${t(r.subj)}</b> ${tag(r.status)}<br><small>${esc(sn(r.sid))} / ${esc(tn(r.tid))} / ${esc(r.slot.replace("T"," "))}</small>${r.note?`<p>${esc(r.note)}</p>`:""}${r.reply?`<p>✉ ${esc(r.reply)}</p>`:""}
+${act&&r.status=="pending"?`<input id="rp${r.id}" placeholder="${t("reply")}"><button class="btn sm" onclick="setReq('${r.id}','approved')">${t("approve")}</button><button class="btn sm red" onclick="setReq('${r.id}','declined')">${t("decline")}</button>`:""}</div>`;
+function subjectsView(){
+ if(sj){const tc=D.teachers.filter(x=>x.subj.includes(sj));return `<button class="back" onclick="sj=null;render()">${L=="ar"?"→":"←"} ${t("backL")}</button>
+ <div class="sub c${SUBJ.indexOf(sj)}" style="min-height:110px"><span class="ic">${ICON[sj]}</span><b style="font-size:22px">${t(sj)}</b><small>${TOP[sj][L].length} ${t("lessons")} · ${t("free")}</small></div>
+ <h2>${t("topics")}</h2><div class="card">${TOP[sj][L].map((x,i)=>`<div class="lesson"><i>${i+1}</i><span>${x}</span></div>`).join("")}</div>
+ <h2>${t("teachers")}</h2>${tc.map(x=>`<div class="card">👤 ${esc(x.name)}</div>`).join("")}
+ <button class="btn y" style="width:100%;padding:14px" onclick="bookSub('${sj}')">${U?t("bookThis"):t("loginFirst")}</button>`}
+ return `<h2>${t("subjects")}</h2><div class="subs">${SUBJ.map((s,i)=>`<div class="sub c${i}" onclick="openSub('${s}')"><span class="ic">${ICON[s]}</span><div><b>${t(s)}</b><br><small>${TOP[s][L].length} ${t("lessons")}</small></div></div>`).join("")}</div>`}
+function homeView(){
+ if(U)return `<div class="card"><h3>👋 ${esc(U.name)} <span class="tag">${t(U.role)}</span></h3><div class="grid3"><div><b>${mine().length}</b>${t("reqs")}</div><div><b>${D.students.length}</b>${t("students")}</div><div><b>${D.mats.length}</b>${t("mats")}</div></div></div>
+ <h2>${t("latest")}</h2>${D.news.slice(0,2).map(newsCard).join("")}`;
+ return `<div class="hero"><h1>${t("hero")}</h1><p>${t("heroP")}</p><button class="btn y" onclick="mode='reg';go('account')">${t("start")}</button><button class="btn ghost" onclick="go('subjects')">${t("browse")}</button>
+ <div class="stats"><div><b>${D.teachers.length}</b>${t("stT")}</div><div><b>4</b>${t("stS")}</div><div><b>20+</b>${t("stC")}</div></div></div>
+ <h2>${t("subjects")}</h2><div class="subs">${SUBJ.map((s,i)=>`<div class="sub c${i}" onclick="openSub('${s}')"><span class="ic">${ICON[s]}</span><div><b>${t(s)}</b></div></div>`).join("")}</div>
+ <h2>${t("latest")}</h2>${D.news.slice(0,2).map(newsCard).join("")}<button class="btn alt" onclick="go('news')">${t("allNews")}</button><div class="foot">${t("demo")}</div>`}
+function accountView(){return `<div class="card"><h3>${mode=="reg"?t("register"):t("login")}</h3><input id="nm" placeholder="${t("name")}"><small>${t("asRole")}</small><br>${["student","teacher","admin"].map(r=>`<button class="btn" onclick="login('${r}')">${t(r)}</button>`).join("")}<p><small>${t("demo")}</small></p></div>`}
+function matsView(add){return D.mats.map(m=>`<div class="card"><b>${esc(m.title)}</b> <span class="tag">${ICON[m.subj]} ${t(m.subj)}</span><br>${/^https?:/.test(m.link)?`<a href="${esc(m.link)}" target="_blank">${esc(m.link)}</a>`:esc(m.link||"")}</div>`).join("")+empty(D.mats)+
+ (add?`<div class="card"><h3>${t("add")}</h3>${subjSel("ms")}<input id="mt" placeholder="${t("title")}"><input id="ml" placeholder="${t("link")}"><button class="btn" onclick="addMat()">${t("add")}</button></div>`:"")}
+function asgView(){const st=U.role=="student";return D.asg.map(a=>`<div class="card"><b>${esc(a.title)}</b> <span class="tag">${ICON[a.subj]} ${t(a.subj)}</span><br><small>${t("due")}: ${esc(a.due||"-")}</small>
+ ${st?(a.subs[U.id]!=null?`<p><span class="tag approved">${t("submitted")}</span><br>${esc(a.subs[U.id])}</p>`:`<textarea id="an${a.id}" placeholder="${t("answer")}"></textarea><button class="btn sm" onclick="sub('${a.id}')">${t("submit")}</button>`)
+ :Object.entries(a.subs).map(([s,v])=>`<p><b>${esc(sn(s))}:</b> ${esc(v)}</p>`).join("")}</div>`).join("")+empty(D.asg)+
+ (st?"":`<div class="card"><h3>${t("add")}</h3>${subjSel("as")}<input id="at" placeholder="${t("title")}"><input id="ad" type="date"><button class="btn" onclick="addAsg()">${t("add")}</button></div>`)}
+function attView(){if(U.role=="student"){const a=D.att.filter(x=>x.sid==U.id);return a.map(x=>`<div class="card">${x.date} ${tag(x.st)}</div>`).join("")+empty(a)}
+ return (U.role=="teacher"?D.students.map(s=>`<div class="card"><b>${esc(s.name)}</b><br><button class="btn sm" onclick="mark('${s.id}','present')">${t("present")}</button><button class="btn sm red" onclick="mark('${s.id}','absent')">${t("absent")}</button></div>`).join(""):"")+D.att.slice().reverse().map(x=>`<div class="card">${x.date} ${esc(sn(x.sid))} ${tag(x.st)}</div>`).join("")}
+function newsView(){return `<h2>${t("news")}</h2>`+D.news.map(newsCard).join("")+(U&&U.role=="admin"?`<div class="card"><h3>${t("post")}</h3><input id="nti" placeholder="${t("title")}"><textarea id="ntx" placeholder="${t("body")}"></textarea><button class="btn" onclick="addN()">${t("post")}</button></div>`:"")}
+function bookView(){return `<div class="card"><h3>${t("book")}</h3>${t("subject")}${subjSel("sj")}${t("teacherL")}${sel("tc",D.teachers)}${t("slot")}<input id="sl" type="datetime-local"><textarea id="nt" placeholder="${t("note")}"></textarea><button class="btn" onclick="addReq()">${t("send")}</button></div>`}
+const PUB=[["home","🏠"],["subjects","📚"],["news","📢"],["account","👤"]];
+const TABS={student:[["home","🏠"],["subjects","📚"],["book","➕"],["mine","📅"],["asg","📝"],["news","📢"]],teacher:[["home","🏠"],["reqs","📥"],["mats","📎"],["asg","📝"],["att","✅"]],admin:[["home","🏠"],["reqs","📥"],["students","🎓"],["teachers","👤"],["news","📢"]]};
+function view(){switch(tab){case"home":return homeView();case"subjects":return subjectsView();case"news":return newsView();case"account":return accountView();
+ case"book":return bookView();case"mine":return mine().map(r=>reqCard(r,false)).join("")+empty(mine());case"reqs":return mine().map(r=>reqCard(r,true)).join("")+empty(mine());
+ case"mats":return matsView(U.role!="student");case"asg":return asgView();case"att":return attView();
+ case"students":return D.students.map(s=>`<div class="card">🎓 ${esc(s.name)}</div>`).join("")+empty(D.students);
+ case"teachers":return D.teachers.map(s=>`<div class="card">👤 ${esc(s.name)} <small>${s.subj.map(t).join("، ")}</small></div>`).join("")+`<div class="card"><h3>${t("newTeacher")}</h3><input id="tnm" placeholder="${t("name")}">${subjSel("tsj")}<button class="btn" onclick="addT()">${t("add")}</button></div>`}}
+function render(){document.documentElement.lang=L;document.documentElement.dir=L=="ar"?"rtl":"ltr";document.getElementById("title").textContent=t("app");
+ const o=document.getElementById("out");o.textContent=U?t("logout"):t("login");o.onclick=U?logout:()=>{mode="login";go("account")};
+ if(!U&&tab!="home"&&tab!="subjects"&&tab!="news"&&tab!="account")tab="home";
+ const tabs=U?TABS[U.role]:PUB;document.getElementById("nav").innerHTML=tabs.map(([k,i])=>`<button class="${k==tab?"on":""}" onclick="go('${k}')"><span>${i}</span>${t(k)}</button>`).join("");
+ document.getElementById("app").innerHTML=view()}
+render();
+</script></body></html>
