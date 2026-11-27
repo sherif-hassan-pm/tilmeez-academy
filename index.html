@@ -48,7 +48,7 @@ start:"سجّل واحجز حصة",browse:"استكشف المواد",login:"د�
 home:"الرئيسية",subjects:"المواد",news:"الإعلانات",account:"حسابي",book:"حجز حصة",mine:"حصصي",asg:"الواجبات",marks:"الدرجات",att:"الحضور",reqs:"الطلبات",users:"المستخدمين",mats:"المواد التعليمية",
 student:"طالب",teacher:"مدرس",admin:"أدمن",ar:"اللغة العربية",en:"اللغة الإنجليزية",is:"العلوم الإسلامية",so:"الاجتماعيات",
 subject:"المادة",teacherL:"المدرس",slot:"التاريخ والوقت المفضل",note:"ملاحظة للأكاديمية",send:"إرسال الطلب",pending:"قيد الانتظار",approved:"تمت الموافقة",declined:"مرفوض",
-approve:"موافقة",decline:"رفض",reply:"رد",title:"العنوان",desc:"الوصف",link:"رابط أو نص",add:"إضافة",due:"موعد التسليم",maxm:"الدرجة الكاملة",present:"حاضر",absent:"غائب",newTeacher:"إضافة مدرس",
+approve:"موافقة",decline:"رفض",reply:"رد",title:"العنوان",desc:"الوصف",link:"رابط أو نص",add:"إضافة",due:"موعد التسليم",maxm:"الدرجة الكاملة",present:"حاضر",absent:"غائب",newUser:"إضافة حساب (طالب أو مدرس)",
 nothing:"لا يوجد شيء بعد",submit:"تسليم الإجابة",answer:"إجابتك",submitted:"تم التسليم",graded:"تم التصحيح",topics:"محتوى المادة",bookThis:"احجز حصة في هذه المادة",backL:"رجوع",
 latest:"آخر الإعلانات",allNews:"كل الإعلانات",post:"نشر إعلان",body:"النص",lessons:"دروس",free:"متاح للجميع",loginFirst:"سجّل الدخول لحجز حصة",teachers:"المدرسين",
 mark:"الدرجة",feedback:"ملاحظات المدرس",save:"حفظ",subs:"التسليمات",avg:"النسبة",del:"حذف",bad:"اسم المستخدم أو كلمة المرور غير صحيحة",short:"كلمة المرور 6 أحرف على الأقل",baduser:"اسم المستخدم: حروف إنجليزية وأرقام و _ فقط (3 إلى 20)",
@@ -58,7 +58,7 @@ start:"Sign up and book a class",browse:"Explore subjects",login:"Log in",logout
 home:"Home",subjects:"Subjects",news:"News",account:"Account",book:"Book class",mine:"My classes",asg:"Assignments",marks:"Marks",att:"Attendance",reqs:"Requests",users:"Users",mats:"Materials",
 student:"Student",teacher:"Teacher",admin:"Admin",ar:"Arabic",en:"English",is:"Islamic Studies",so:"Social Studies",
 subject:"Subject",teacherL:"Teacher",slot:"Preferred date and time",note:"Note to the academy",send:"Send request",pending:"pending",approved:"approved",declined:"declined",
-approve:"Approve",decline:"Decline",reply:"Reply",title:"Title",desc:"Description",link:"Link or text",add:"Add",due:"Due date",maxm:"Max marks",present:"present",absent:"absent",newTeacher:"Add teacher",
+approve:"Approve",decline:"Decline",reply:"Reply",title:"Title",desc:"Description",link:"Link or text",add:"Add",due:"Due date",maxm:"Max marks",present:"present",absent:"absent",newUser:"Add account (student or teacher)",
 nothing:"Nothing yet",submit:"Submit answer",answer:"Your answer",submitted:"Submitted",graded:"Graded",topics:"Subject content",bookThis:"Book a class in this subject",backL:"Back",
 latest:"Latest announcements",allNews:"All announcements",post:"Post announcement",body:"Text",lessons:"lessons",free:"Open to all",loginFirst:"Log in to book a class",teachers:"Teachers",
 mark:"Marks",feedback:"Teacher feedback",save:"Save",subs:"Submissions",avg:"Average",del:"Delete",bad:"Wrong username or password",short:"Password must be at least 6 characters",baduser:"Username: English letters, numbers and _ only (3 to 20)",
@@ -103,11 +103,11 @@ const gradeSub=(id,max)=>act(async()=>{const m=parseFloat(val("mk"+id));if(isNaN
 const markAtt=(sid,st)=>act(async()=>{const {error}=await sb.from("attendance").insert({student_id:sid,teacher_id:ME.id,status:st});if(error)throw error});
 const addN=()=>act(async()=>{if(!val("nti"))return;const {error}=await sb.from("news").insert({title:val("nti"),title_en:val("nti"),body:val("ntx"),body_en:val("ntx")});if(error)throw error});
 const delN=id=>act(async()=>{const {error}=await sb.from("news").delete().eq("id",id);if(error)throw error});
-const addTeacher=()=>act(async()=>{const u=val("tu").trim().toLowerCase(),p=val("tp"),n=val("tn").trim();
+const addUser=()=>act(async()=>{const u=val("tu").trim().toLowerCase(),p=val("tp"),n=val("tn").trim();
  if(!/^[a-z0-9_]{3,20}$/.test(u))return alert(t("baduser"));if(p.length<6)return alert(t("short"));
  const c2=supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:false,autoRefreshToken:false,storageKey:"tmp"}});
  const {data,error}=await c2.auth.signUp({email:EM(u),password:p,options:{data:{full_name:n||u}}});if(error)throw error;
- const {error:e2}=await sb.from("profiles").update({role:"teacher",full_name:n||u}).eq("id",data.user.id);if(e2)throw e2;alert(t("created")+": "+u)});
+ const {error:e2}=await sb.from("profiles").update({role:val("tr"),full_name:n||u}).eq("id",data.user.id);if(e2)throw e2;alert(t("created")+": "+u)});
 function openSub(s){sj=s;tab="subjects";render();scrollTo(0,0)}
 function bookSub(s){if(!ME){mode="login";tab="account";sj=null;render();return}tab="book";sj=s;render()}
 const subjSel=(id,sel)=>`<select id="${id}">${SUBJ.map(s=>`<option value="${s}" ${s==sel?"selected":""}>${t(s)}</option>`).join("")}</select>`;
@@ -163,7 +163,7 @@ async function vAtt(){const a=await q(sb.from("attendance").select("*,s:profiles
  return h+a.map(x=>`<div class="card">${x.day} ${ME.role!="student"?esc(nm(x.s)):""} ${tag(x.status)}</div>`).join("")+(h?"":empty(a))}
 async function vUsers(){const p=await q(sb.from("profiles").select("*").order("created_at"));
  return p.map(x=>`<div class="card">${x.role=="teacher"?"👤":x.role=="admin"?"🛡️":"🎓"} <b>${esc(nm(x))}</b> <small>@${esc(x.username)}</small> <span class="tag">${t(x.role)}</span></div>`).join("")+
- `<div class="card"><h3>${t("newTeacher")}</h3><input id="tn" placeholder="${t("fullname")}"><input id="tu" placeholder="${t("username")}" autocapitalize="none"><input id="tp" type="password" placeholder="${t("password")}" autocomplete="new-password"><button class="btn" onclick="addTeacher()">${t("add")}</button></div>`}
+ `<div class="card"><h3>${t("newUser")}</h3><select id="tr"><option value="student">${t("student")}</option><option value="teacher">${t("teacher")}</option></select><input id="tn" placeholder="${t("fullname")}"><input id="tu" placeholder="${t("username")}" autocapitalize="none"><input id="tp" type="password" placeholder="${t("password")}" autocomplete="new-password"><button class="btn" onclick="addUser()">${t("add")}</button></div>`}
 const PUB=[["home","🏠"],["subjects","📚"],["news","📢"],["account","👤"]];
 const TABS={student:[["home","🏠"],["subjects","📚"],["book","➕"],["mine","📅"],["asg","📝"],["marks","🏅"]],teacher:[["home","🏠"],["reqs","📥"],["asg","📝"],["mats","📎"],["att","✅"]],admin:[["home","🏠"],["reqs","📥"],["users","🎓"],["news","📢"],["att","✅"]]};
 async function view(){switch(tab){case"home":return vHome();case"subjects":return vSubjects();case"news":return vNews();case"account":return ME?vHome():vAccount();
