@@ -37,6 +37,7 @@ nav button span{font-size:20px}nav button.on{color:var(--g);font-weight:700}
 .back{background:none;border:0;color:var(--g);font-weight:700;cursor:pointer;padding:6px 2px}
 .foot{text-align:center;color:var(--mut);font-size:12px;margin:18px 0}
 .err{color:#b91c1c;font-size:14px}.mark{font-size:22px;font-weight:700;color:var(--g)}.row{display:flex;gap:8px}.row>*{flex:1}.pill{display:inline-block;margin:2px;padding:3px 10px;border-radius:99px;background:#e6f4f1;color:#0f766e;font-size:12px}.bar{height:8px;background:#e2e8f0;border-radius:9px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--g),var(--y))}
+a.btn{text-decoration:none;display:inline-block}.small{font-size:12px;color:#64748b}
 </style></head><body>
 <header><div class="logo" onclick="go('home')"><i>✦</i><span id="title"></span></div><span><button class="btn ghost sm" onclick="toggleLang()">EN / عربي</button> <button class="btn ghost sm" id="out" onclick="logout()"></button></span></header>
 <main id="app"></main><nav id="nav"></nav>
@@ -52,7 +53,7 @@ approve:"موافقة",decline:"رفض",reply:"رد",title:"العنوان",desc
 nothing:"لا يوجد شيء بعد",submit:"تسليم الإجابة",answer:"إجابتك",submitted:"تم التسليم",graded:"تم التصحيح",topics:"محتوى المادة",bookThis:"احجز حصة في هذه المادة",backL:"رجوع",
 latest:"آخر الإعلانات",allNews:"كل الإعلانات",post:"نشر إعلان",body:"النص",lessons:"دروس",free:"متاح للجميع",loginFirst:"سجّل الدخول لحجز حصة",teachers:"المدرسين",
 mark:"الدرجة",feedback:"ملاحظات المدرس",save:"حفظ",subs:"التسليمات",avg:"النسبة",del:"حذف",bad:"اسم المستخدم أو كلمة المرور غير صحيحة",short:"كلمة المرور 6 أحرف على الأقل",baduser:"اسم المستخدم: حروف إنجليزية وأرقام و _ فقط (3 إلى 20)",
-taken:"اسم المستخدم مستخدم",created:"تم إنشاء الحساب"},
+taken:"اسم المستخدم مستخدم",meet:"رابط الحصة (Zoom / Meet)",openMeet:"انضم للحصة",file:"ملف",attach:"إرفاق ملف (اختياري)",dl:"تحميل الملف",saveLink:"حفظ الرابط",tooBig:"الملف أكبر من 10 ميغابايت",myFile:"ملفك",created:"تم إنشاء الحساب"},
 en:{app:"Tilmeez Academy",hero:"Online learning with great teachers",heroP:"Arabic, English, Islamic studies and social studies. Book a class and learn from home.",
 start:"Sign up and book a class",browse:"Explore subjects",login:"Log in",logout:"Log out",username:"Username",password:"Password",fullname:"Full name",register:"New account",newAcc:"Create student account",
 home:"Home",subjects:"Subjects",news:"News",account:"Account",book:"Book class",mine:"My classes",asg:"Assignments",marks:"Marks",att:"Attendance",reqs:"Requests",users:"Users",mats:"Materials",
@@ -62,7 +63,7 @@ approve:"Approve",decline:"Decline",reply:"Reply",title:"Title",desc:"Descriptio
 nothing:"Nothing yet",submit:"Submit answer",answer:"Your answer",submitted:"Submitted",graded:"Graded",topics:"Subject content",bookThis:"Book a class in this subject",backL:"Back",
 latest:"Latest announcements",allNews:"All announcements",post:"Post announcement",body:"Text",lessons:"lessons",free:"Open to all",loginFirst:"Log in to book a class",teachers:"Teachers",
 mark:"Marks",feedback:"Teacher feedback",save:"Save",subs:"Submissions",avg:"Average",del:"Delete",bad:"Wrong username or password",short:"Password must be at least 6 characters",baduser:"Username: English letters, numbers and _ only (3 to 20)",
-taken:"Username is taken",created:"Account created"}};
+taken:"Username is taken",meet:"Class link (Zoom / Meet)",openMeet:"Join class",file:"File",attach:"Attach a file (optional)",dl:"Download file",saveLink:"Save link",tooBig:"File is over 10 MB",myFile:"Your file",created:"Account created"}};
 const SUBJ=["ar","en","is","so"],ICON={ar:"✍️",en:"🌍",is:"🕌",so:"🧭"};
 const TOP={ar:{ar:["الحروف والنطق","القراءة والفهم","النحو الأساسي","الإملاء والكتابة","التعبير والمحادثة"],en:["Letters and pronunciation","Reading comprehension","Basic grammar","Spelling and writing","Expression and conversation"]},
 en:{ar:["Phonics and the alphabet","Everyday vocabulary","Grammar and tenses","Reading and writing","Speaking practice"],en:["Phonics and the alphabet","Everyday vocabulary","Grammar and tenses","Reading and writing","Speaking practice"]},
@@ -87,6 +88,11 @@ async function doRegister(){msg="";const u=val("un").trim().toLowerCase(),p=val(
  await loadMe();tab="home";render()}
 async function logout(){await sb.auth.signOut();ME=null;go("home")}
 async function q(p){const {data,error}=await p;if(error){console.error(error);return[]}return data||[]}
+const fileIn=id=>`<label class="small">${t("attach")}</label><input id="${id}" type="file">`;
+async function upFile(id,prefix){const f=document.getElementById(id)&&document.getElementById(id).files[0];if(!f)return null;if(f.size>10485760){alert(t("tooBig"));throw new Error(t("tooBig"))}
+ const safe=f.name.replace(/[^A-Za-z0-9._-]/g,"_");const path=prefix+"/"+Date.now()+"_"+safe;const {error}=await sb.storage.from("files").upload(path,f);if(error)throw error;return path}
+async function openFile(p){const w=window.open("","_blank");const {data,error}=await sb.storage.from("files").createSignedUrl(p,300);if(error){if(w)w.close();return alert(error.message)}if(w)w.location=data.signedUrl;else location=data.signedUrl}
+const fileBtn=(p,l)=>p?`<button class="btn sm alt" onclick="openFile('${esc(p)}')">📎 ${l||t("dl")}</button>`:"";
 const tag=s=>`<span class="tag ${s}">${t(s)}</span>`;
 const empty=a=>a.length?"":`<p><small>${t("nothing")}</small></p>`;
 const fmtDate=d=>String(d||"").slice(0,10);
@@ -94,11 +100,11 @@ const nm=p=>p?(p.full_name||p.username):"-";
 const newsCard=n=>`<div class="card news"><small>${fmtDate(n.created_at)}</small><h3>${esc(L=="ar"?n.title:n.title_en)}</h3>${esc(L=="ar"?n.body:n.body_en)}</div>`;
 async function act(fn){if(busy)return;busy=true;try{await fn()}catch(e){console.error(e);alert(e.message||e)}busy=false;render()}
 const addReq=()=>act(async()=>{const slot=val("sl");if(!slot)return alert(t("slot"));const {error}=await sb.from("requests").insert({student_id:ME.id,teacher_id:val("tc"),subj:val("sj"),slot,note:val("nt")});if(error)throw error;tab="mine"});
-const setReq=(id,s)=>act(async()=>{const e=document.getElementById("rp"+id);const {error}=await sb.from("requests").update({status:s,reply:e?e.value:null}).eq("id",id);if(error)throw error});
-const addMat=()=>act(async()=>{if(!val("mt"))return;const {error}=await sb.from("materials").insert({subj:val("ms"),title:val("mt"),link:val("ml"),created_by:ME.id});if(error)throw error});
-const addAsg=()=>act(async()=>{if(!val("at"))return;const {error}=await sb.from("assignments").insert({subj:val("as"),title:val("at"),description:val("ad0"),due:val("ad")||null,max_marks:+val("am")||100,teacher_id:ME.id});if(error)throw error});
+const setReq=(id,s)=>act(async()=>{const e=document.getElementById("rp"+id),m=document.getElementById("ml"+id);const u={status:s};if(e)u.reply=e.value;if(m)u.meet_link=m.value.trim()||null;const {error}=await sb.from("requests").update(u).eq("id",id);if(error)throw error});
+const addMat=()=>act(async()=>{if(!val("mt"))return;const fp=await upFile("mf","teach");const {error}=await sb.from("materials").insert({subj:val("ms"),title:val("mt"),link:val("ml"),file_path:fp,created_by:ME.id});if(error)throw error});
+const addAsg=()=>act(async()=>{if(!val("at"))return;const fp=await upFile("af","teach");const {error}=await sb.from("assignments").insert({file_path:fp,subj:val("as"),title:val("at"),description:val("ad0"),due:val("ad")||null,max_marks:+val("am")||100,teacher_id:ME.id});if(error)throw error});
 const delAsg=id=>act(async()=>{if(!confirm(t("del")+"?"))return;const {error}=await sb.from("assignments").delete().eq("id",id);if(error)throw error});
-const subAns=id=>act(async()=>{const a=val("an"+id);if(!a.trim())return;const {error}=await sb.from("submissions").upsert({assignment_id:id,student_id:ME.id,answer:a},{onConflict:"assignment_id,student_id"});if(error)throw error});
+const subAns=id=>act(async()=>{const a=val("an"+id);const fp=await upFile("sf"+id,"ans/"+ME.id);if(!a.trim()&&!fp)return;const row={assignment_id:id,student_id:ME.id,answer:a};if(fp)row.file_path=fp;const {error}=await sb.from("submissions").upsert(row,{onConflict:"assignment_id,student_id"});if(error)throw error});
 const gradeSub=(id,max)=>act(async()=>{const m=parseFloat(val("mk"+id));if(isNaN(m)||m<0||m>max)return alert(t("maxm")+": "+max);const {error}=await sb.from("submissions").update({marks:m,feedback:val("fb"+id),graded_at:new Date().toISOString()}).eq("id",id);if(error)throw error});
 const markAtt=(sid,st)=>act(async()=>{const {error}=await sb.from("attendance").insert({student_id:sid,teacher_id:ME.id,status:st});if(error)throw error});
 const addN=()=>act(async()=>{if(!val("nti"))return;const {error}=await sb.from("news").insert({title:val("nti"),title_en:val("nti"),body:val("ntx"),body_en:val("ntx")});if(error)throw error});
@@ -136,26 +142,26 @@ function vAccount(){const reg=false;return `<div class="card"><h3>${reg?t("newAc
 async function vBook(){const tc=await q(sb.from("profiles").select("id,full_name,username").eq("role","teacher"));
  return `<div class="card"><h3>${t("book")}</h3>${t("subject")}${subjSel("sj",sj)}${t("teacherL")}${sel("tc",tc)}${t("slot")}<input id="sl" type="datetime-local"><textarea id="nt" placeholder="${t("note")}"></textarea><button class="btn" onclick="addReq()">${t("send")}</button></div>`}
 const reqCard=(r,act)=>`<div class="card"><b>${ICON[r.subj]} ${t(r.subj)}</b> ${tag(r.status)}<br><small>${esc(nm(r.s))} / ${esc(nm(r.t))} / ${esc(String(r.slot).replace("T"," "))}</small>${r.note?`<p>${esc(r.note)}</p>`:""}${r.reply?`<p>✉ ${esc(r.reply)}</p>`:""}
-${act&&r.status=="pending"?`<input id="rp${r.id}" placeholder="${t("reply")}"><button class="btn sm" onclick="setReq('${r.id}','approved')">${t("approve")}</button><button class="btn sm red" onclick="setReq('${r.id}','declined')">${t("decline")}</button>`:""}</div>`;
+${r.status=="approved"&&r.meet_link?`<p><a class="btn sm y" href="${esc(r.meet_link)}" target="_blank" rel="noopener">🎥 ${t("openMeet")}</a></p>`:""}${act&&r.status=="approved"?`<input id="ml${r.id}" placeholder="${t("meet")}" value="${esc(r.meet_link||"")}"><button class="btn sm" onclick="setReq('${r.id}','approved')">${t("saveLink")}</button>`:""}${act&&r.status=="pending"?`<input id="rp${r.id}" placeholder="${t("reply")}"><input id="ml${r.id}" placeholder="${t("meet")}"><button class="btn sm" onclick="setReq('${r.id}','approved')">${t("approve")}</button><button class="btn sm red" onclick="setReq('${r.id}','declined')">${t("decline")}</button>`:""}</div>`;
 async function vReqs(act){const r=await q(sb.from("requests").select("*,s:profiles!requests_student_id_fkey(full_name,username),t:profiles!requests_teacher_id_fkey(full_name,username)").order("created_at",{ascending:false}));return r.map(x=>reqCard(x,act)).join("")+empty(r)}
 async function vAsg(){const a=await q(sb.from("assignments").select("*,p:profiles!assignments_teacher_id_fkey(full_name,username)").order("created_at",{ascending:false}));
  const subs=await q(sb.from("submissions").select("*,s:profiles!submissions_student_id_fkey(full_name,username)"));const st=ME.role=="student";let h="";
  for(const x of a){const mine=subs.find(y=>y.assignment_id==x.id&&y.student_id==ME.id);
-  h+=`<div class="card"><b>${esc(x.title)}</b> <span class="tag">${ICON[x.subj]} ${t(x.subj)}</span><br><small>${t("due")}: ${esc(x.due||"-")} · ${t("maxm")}: ${x.max_marks} · ${esc(nm(x.p))}</small>${x.description?`<p>${esc(x.description)}</p>`:""}`;
-  if(st){if(!mine)h+=`<textarea id="an${x.id}" placeholder="${t("answer")}"></textarea><button class="btn sm" onclick="subAns('${x.id}')">${t("submit")}</button>`;
-   else if(mine.marks==null)h+=`<p><span class="tag pending">${t("submitted")}</span></p><textarea id="an${x.id}">${esc(mine.answer)}</textarea><button class="btn sm alt" onclick="subAns('${x.id}')">${t("submit")}</button>`;
-   else h+=`<p><span class="tag approved">${t("graded")}</span></p><div class="mark">${mine.marks} / ${x.max_marks}</div><div class="bar"><i style="width:${Math.round(100*mine.marks/x.max_marks)}%"></i></div>${mine.feedback?`<p>✉ ${esc(mine.feedback)}</p>`:""}<p><small>${esc(mine.answer)}</small></p>`}
+  h+=`<div class="card"><b>${esc(x.title)}</b> <span class="tag">${ICON[x.subj]} ${t(x.subj)}</span><br><small>${t("due")}: ${esc(x.due||"-")} · ${t("maxm")}: ${x.max_marks} · ${esc(nm(x.p))}</small>${x.description?`<p>${esc(x.description)}</p>`:""}${fileBtn(x.file_path)}`;
+  if(st){if(!mine)h+=`<textarea id="an${x.id}" placeholder="${t("answer")}"></textarea>${fileIn("sf"+x.id)}<button class="btn sm" onclick="subAns('${x.id}')">${t("submit")}</button>`;
+   else if(mine.marks==null)h+=`<p><span class="tag pending">${t("submitted")}</span></p><textarea id="an${x.id}">${esc(mine.answer)}</textarea>${fileBtn(mine.file_path,t("myFile"))}${fileIn("sf"+x.id)}<button class="btn sm alt" onclick="subAns('${x.id}')">${t("submit")}</button>`;
+   else h+=`<p><span class="tag approved">${t("graded")}</span></p><div class="mark">${mine.marks} / ${x.max_marks}</div><div class="bar"><i style="width:${Math.round(100*mine.marks/x.max_marks)}%"></i></div>${mine.feedback?`<p>✉ ${esc(mine.feedback)}</p>`:""}<p><small>${esc(mine.answer)}</small></p>${fileBtn(mine.file_path,t("myFile"))}`}
   else{const ss=subs.filter(y=>y.assignment_id==x.id);h+=`<h3>${t("subs")} (${ss.length})</h3>`;
-   for(const y of ss)h+=`<div class="card" style="background:#f8fafc"><b>${esc(nm(y.s))}</b>${y.marks!=null?` <span class="pill">${y.marks}/${x.max_marks}</span>`:""}<p>${esc(y.answer)}</p><div class="row"><input id="mk${y.id}" type="number" placeholder="${t("mark")} /${x.max_marks}" value="${y.marks==null?"":y.marks}"><input id="fb${y.id}" placeholder="${t("feedback")}" value="${esc(y.feedback||"")}"></div><button class="btn sm" onclick="gradeSub('${y.id}',${x.max_marks})">${t("save")}</button></div>`;
+   for(const y of ss)h+=`<div class="card" style="background:#f8fafc"><b>${esc(nm(y.s))}</b>${y.marks!=null?` <span class="pill">${y.marks}/${x.max_marks}</span>`:""}<p>${esc(y.answer)}</p>${fileBtn(y.file_path,t("file"))}<div class="row"><input id="mk${y.id}" type="number" placeholder="${t("mark")} /${x.max_marks}" value="${y.marks==null?"":y.marks}"><input id="fb${y.id}" placeholder="${t("feedback")}" value="${esc(y.feedback||"")}"></div><button class="btn sm" onclick="gradeSub('${y.id}',${x.max_marks})">${t("save")}</button></div>`;
    h+=`<button class="btn sm red" onclick="delAsg('${x.id}')">${t("del")}</button>`}
   h+=`</div>`}
- if(!st)h+=`<div class="card"><h3>${t("add")}</h3>${subjSel("as")}<input id="at" placeholder="${t("title")}"><textarea id="ad0" placeholder="${t("desc")}"></textarea><div class="row"><input id="ad" type="date"><input id="am" type="number" placeholder="${t("maxm")}" value="100"></div><button class="btn" onclick="addAsg()">${t("add")}</button></div>`;
+ if(!st)h+=`<div class="card"><h3>${t("add")}</h3>${subjSel("as")}<input id="at" placeholder="${t("title")}"><textarea id="ad0" placeholder="${t("desc")}"></textarea>${fileIn("af")}<div class="row"><input id="ad" type="date"><input id="am" type="number" placeholder="${t("maxm")}" value="100"></div><button class="btn" onclick="addAsg()">${t("add")}</button></div>`;
  return h+empty(a)}
 async function vMarks(){const s=await q(sb.from("submissions").select("*,assignments(title,max_marks,subj)").eq("student_id",ME.id).not("marks","is",null).order("graded_at",{ascending:false}));
  return `<h2>${t("marks")}</h2>`+s.map(x=>`<div class="card"><b>${esc(x.assignments.title)}</b> <span class="tag">${ICON[x.assignments.subj]} ${t(x.assignments.subj)}</span><div class="mark">${x.marks} / ${x.assignments.max_marks}</div>${x.feedback?`<p>✉ ${esc(x.feedback)}</p>`:""}</div>`).join("")+empty(s)}
 async function vMats(){const m=await q(sb.from("materials").select("*").order("created_at",{ascending:false}));
- return m.map(x=>`<div class="card"><b>${esc(x.title)}</b> <span class="tag">${ICON[x.subj]} ${t(x.subj)}</span><br>${/^https?:/.test(x.link||"")?`<a href="${esc(x.link)}" target="_blank" rel="noopener">${esc(x.link)}</a>`:esc(x.link||"")}</div>`).join("")+empty(m)+
- (ME.role!="student"?`<div class="card"><h3>${t("add")}</h3>${subjSel("ms")}<input id="mt" placeholder="${t("title")}"><input id="ml" placeholder="${t("link")}"><button class="btn" onclick="addMat()">${t("add")}</button></div>`:"")}
+ return m.map(x=>`<div class="card"><b>${esc(x.title)}</b> <span class="tag">${ICON[x.subj]} ${t(x.subj)}</span><br>${/^https?:/.test(x.link||"")?`<a href="${esc(x.link)}" target="_blank" rel="noopener">${esc(x.link)}</a>`:esc(x.link||"")}<br>${fileBtn(x.file_path)}</div>`).join("")+empty(m)+
+ (ME.role!="student"?`<div class="card"><h3>${t("add")}</h3>${subjSel("ms")}<input id="mt" placeholder="${t("title")}"><input id="ml" placeholder="${t("link")}">${fileIn("mf")}<button class="btn" onclick="addMat()">${t("add")}</button></div>`:"")}
 async function vAtt(){const a=await q(sb.from("attendance").select("*,s:profiles!attendance_student_id_fkey(full_name,username)").order("day",{ascending:false}).limit(50));let h="";
  if(ME.role=="teacher"){const ss=await q(sb.from("profiles").select("id,full_name,username").eq("role","student"));h=ss.map(s=>`<div class="card"><b>${esc(nm(s))}</b><br><button class="btn sm" onclick="markAtt('${s.id}','present')">${t("present")}</button><button class="btn sm red" onclick="markAtt('${s.id}','absent')">${t("absent")}</button></div>`).join("")}
  return h+a.map(x=>`<div class="card">${x.day} ${ME.role!="student"?esc(nm(x.s)):""} ${tag(x.status)}</div>`).join("")+(h?"":empty(a))}
