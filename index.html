@@ -39,7 +39,7 @@ nav button span{font-size:20px}nav button.on{color:var(--g);font-weight:700}
 .err{color:#b91c1c;font-size:14px}.mark{font-size:22px;font-weight:700;color:var(--g)}.row{display:flex;gap:8px}.row>*{flex:1}.pill{display:inline-block;margin:2px;padding:3px 10px;border-radius:99px;background:#e6f4f1;color:#0f766e;font-size:12px}.bar{height:8px;background:#e2e8f0;border-radius:9px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--g),var(--y))}
 a.btn{text-decoration:none;display:inline-block}.small{font-size:12px;color:#64748b}
 </style></head><body>
-<header><div class="logo" onclick="go('home')"><i>✦</i><span id="title"></span></div><span><button class="btn ghost sm" onclick="toggleLang()">EN / عربي</button> <button class="btn ghost sm" id="out" onclick="logout()"></button></span></header>
+<header><div class="logo" onclick="go('home')"><i>✦</i><span id="title"></span></div><span><button class="btn ghost sm" onclick="toggleLang()">EN / عربي</button> <button class="btn y sm" id="inst" style="display:none" onclick="doInstall()"></button> <button class="btn ghost sm" id="out" onclick="logout()"></button></span></header>
 <main id="app"></main><nav id="nav"></nav>
 <script>
 const SB_URL="https://ovzpowzgpbamanuqklkf.supabase.co",SB_KEY="sb_publishable_e9glKLnO1Yw2EAOx0ZUJNA_caWLLnhf";
@@ -53,7 +53,7 @@ approve:"موافقة",decline:"رفض",reply:"رد",title:"العنوان",desc
 nothing:"لا يوجد شيء بعد",submit:"تسليم الإجابة",answer:"إجابتك",submitted:"تم التسليم",graded:"تم التصحيح",topics:"محتوى المادة",bookThis:"احجز حصة في هذه المادة",backL:"رجوع",
 latest:"آخر الإعلانات",allNews:"كل الإعلانات",post:"نشر إعلان",body:"النص",lessons:"دروس",free:"متاح للجميع",loginFirst:"سجّل الدخول لحجز حصة",teachers:"المدرسين",
 mark:"الدرجة",feedback:"ملاحظات المدرس",save:"حفظ",subs:"التسليمات",avg:"النسبة",del:"حذف",bad:"اسم المستخدم أو كلمة المرور غير صحيحة",short:"كلمة المرور 6 أحرف على الأقل",baduser:"اسم المستخدم: حروف إنجليزية وأرقام و _ فقط (3 إلى 20)",
-taken:"اسم المستخدم مستخدم",meet:"رابط الحصة (Zoom / Meet)",openMeet:"انضم للحصة",file:"ملف",attach:"إرفاق ملف (اختياري)",dl:"تحميل الملف",saveLink:"حفظ الرابط",tooBig:"الملف أكبر من 10 ميغابايت",myFile:"ملفك",created:"تم إنشاء الحساب"},
+taken:"اسم المستخدم مستخدم",install:"تثبيت التطبيق",installTxt:"ثبّت تلميذ على جهازك للوصول السريع",iosHint:"على الآيفون: اضغط زر المشاركة ثم «إضافة إلى الشاشة الرئيسية»",desk:"على الكمبيوتر: اضغط أيقونة التثبيت في شريط العنوان",profile:"ملفي",wa:"رقم واتساب (مع رمز الدولة)",saved:"تم الحفظ",remind:"تذكير واتساب",hello:"مرحباً",remMsg:"تذكير بحصتك",withT:"مع",onT:"يوم",joinL:"رابط الحصة",nowa:"لا يوجد رقم واتساب",meet:"رابط الحصة (Zoom / Meet)",openMeet:"انضم للحصة",file:"ملف",attach:"إرفاق ملف (اختياري)",dl:"تحميل الملف",saveLink:"حفظ الرابط",tooBig:"الملف أكبر من 10 ميغابايت",myFile:"ملفك",created:"تم إنشاء الحساب"},
 en:{app:"Tilmeez Academy",hero:"Online learning with great teachers",heroP:"Arabic, English, Islamic studies and social studies. Book a class and learn from home.",
 start:"Sign up and book a class",browse:"Explore subjects",login:"Log in",logout:"Log out",username:"Username",password:"Password",fullname:"Full name",register:"New account",newAcc:"Create student account",
 home:"Home",subjects:"Subjects",news:"News",account:"Account",book:"Book class",mine:"My classes",asg:"Assignments",marks:"Marks",att:"Attendance",reqs:"Requests",users:"Users",mats:"Materials",
@@ -63,7 +63,7 @@ approve:"Approve",decline:"Decline",reply:"Reply",title:"Title",desc:"Descriptio
 nothing:"Nothing yet",submit:"Submit answer",answer:"Your answer",submitted:"Submitted",graded:"Graded",topics:"Subject content",bookThis:"Book a class in this subject",backL:"Back",
 latest:"Latest announcements",allNews:"All announcements",post:"Post announcement",body:"Text",lessons:"lessons",free:"Open to all",loginFirst:"Log in to book a class",teachers:"Teachers",
 mark:"Marks",feedback:"Teacher feedback",save:"Save",subs:"Submissions",avg:"Average",del:"Delete",bad:"Wrong username or password",short:"Password must be at least 6 characters",baduser:"Username: English letters, numbers and _ only (3 to 20)",
-taken:"Username is taken",meet:"Class link (Zoom / Meet)",openMeet:"Join class",file:"File",attach:"Attach a file (optional)",dl:"Download file",saveLink:"Save link",tooBig:"File is over 10 MB",myFile:"Your file",created:"Account created"}};
+taken:"Username is taken",install:"Install app",installTxt:"Install Tilmeez on your device for quick access",iosHint:"On iPhone: tap the Share button, then Add to Home Screen",desk:"On desktop: click the install icon in the address bar",profile:"My profile",wa:"WhatsApp number (with country code)",saved:"Saved",remind:"WhatsApp reminder",hello:"Hello",remMsg:"Reminder for your class",withT:"with",onT:"on",joinL:"Class link",nowa:"No WhatsApp number",meet:"Class link (Zoom / Meet)",openMeet:"Join class",file:"File",attach:"Attach a file (optional)",dl:"Download file",saveLink:"Save link",tooBig:"File is over 10 MB",myFile:"Your file",created:"Account created"}};
 const SUBJ=["ar","en","is","so"],ICON={ar:"✍️",en:"🌍",is:"🕌",so:"🧭"};
 const TOP={ar:{ar:["الحروف والنطق","القراءة والفهم","النحو الأساسي","الإملاء والكتابة","التعبير والمحادثة"],en:["Letters and pronunciation","Reading comprehension","Basic grammar","Spelling and writing","Expression and conversation"]},
 en:{ar:["Phonics and the alphabet","Everyday vocabulary","Grammar and tenses","Reading and writing","Speaking practice"],en:["Phonics and the alphabet","Everyday vocabulary","Grammar and tenses","Reading and writing","Speaking practice"]},
@@ -88,6 +88,18 @@ async function doRegister(){msg="";const u=val("un").trim().toLowerCase(),p=val(
  await loadMe();tab="home";render()}
 async function logout(){await sb.auth.signOut();ME=null;go("home")}
 async function q(p){const {data,error}=await p;if(error){console.error(error);return[]}return data||[]}
+let DIP=null;window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();DIP=e;render()});window.addEventListener("appinstalled",()=>{DIP=null;localStorage.inst="1";render()});
+const isStandalone=()=>matchMedia("(display-mode: standalone)").matches||navigator.standalone;
+const isIOS=()=>/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform=="MacIntel"&&navigator.maxTouchPoints>1);
+async function doInstall(){if(DIP){DIP.prompt();await DIP.userChoice;DIP=null;render()}}
+function installCard(){if(isStandalone()||localStorage.inst)return"";
+ return `<div class="card" style="border:2px solid var(--y)"><h3>📲 ${t("install")}</h3><small>${t("installTxt")}</small>${DIP?`<br><button class="btn y" onclick="doInstall()">${t("install")}</button>`:`<p class="small">${isIOS()?t("iosHint"):t("desk")}</p>`}</div>`}
+const waNum=n=>{let d=String(n||"").replace(/\D/g,"");if(d.startsWith("00"))d=d.slice(2);else if(d.startsWith("0"))d="971"+d.slice(1);return d};
+const waLink=(n,msg)=>"https://wa.me/"+waNum(n)+"?text="+encodeURIComponent(msg);
+const saveProfile=()=>act(async()=>{const n=val("pn").trim(),w=val("pw2").trim();if(n){const {error:e1}=await sb.rpc("set_my_name",{p_name:n});if(e1)throw e1}
+ const {error}=await sb.from("contacts").upsert({user_id:ME.id,whatsapp:w,updated_at:new Date().toISOString()},{onConflict:"user_id"});if(error)throw error;await loadMe();alert(t("saved"))});
+async function vProfile(){const c=await q(sb.from("contacts").select("whatsapp").eq("user_id",ME.id));
+ return `<div class="card"><h3>👤 ${t("profile")}</h3><small>@${esc(ME.username)} · ${t(ME.role)}</small><br>${t("fullname")}<input id="pn" value="${esc(ME.full_name||"")}">${t("wa")}<input id="pw2" type="tel" placeholder="+9715XXXXXXXX" value="${esc(c[0]?c[0].whatsapp:"")}"><button class="btn" onclick="saveProfile()">${t("save")}</button></div>`+installCard()}
 const fileIn=id=>`<label class="small">${t("attach")}</label><input id="${id}" type="file">`;
 async function upFile(id,prefix){const f=document.getElementById(id)&&document.getElementById(id).files[0];if(!f)return null;if(f.size>10485760){alert(t("tooBig"));throw new Error(t("tooBig"))}
  const safe=f.name.replace(/[^A-Za-z0-9._-]/g,"_");const path=prefix+"/"+Date.now()+"_"+safe;const {error}=await sb.storage.from("files").upload(path,f);if(error)throw error;return path}
@@ -111,7 +123,8 @@ const addN=()=>act(async()=>{if(!val("nti"))return;const {error}=await sb.from("
 const delN=id=>act(async()=>{const {error}=await sb.from("news").delete().eq("id",id);if(error)throw error});
 const addUser=()=>act(async()=>{const u=val("tu").trim().toLowerCase(),p=val("tp"),n=val("tn").trim();
  if(!/^[a-z0-9_]{3,20}$/.test(u))return alert(t("baduser"));if(p.length<6)return alert(t("short"));
- const {error}=await sb.rpc("admin_create_user",{p_username:u,p_password:p,p_name:n,p_role:val("tr")});
+ const {data:nid,error}=await sb.rpc("admin_create_user",{p_username:u,p_password:p,p_name:n,p_role:val("tr")});
+ if(!error&&val("tw").trim()){const {error:e3}=await sb.from("contacts").upsert({user_id:nid,whatsapp:val("tw").trim()},{onConflict:"user_id"});if(e3)throw e3}
  if(error)throw new Error(/taken/.test(error.message)?t("taken"):error.message);alert(t("created")+": "+u)});function openSub(s){sj=s;tab="subjects";render();scrollTo(0,0)}
 function bookSub(s){if(!ME){mode="login";tab="account";sj=null;render();return}tab="book";sj=s;render()}
 const subjSel=(id,sel)=>`<select id="${id}">${SUBJ.map(s=>`<option value="${s}" ${s==sel?"selected":""}>${t(s)}</option>`).join("")}</select>`;
@@ -119,12 +132,12 @@ const sel=(id,a)=>`<select id="${id}">${a.map(x=>`<option value="${x.id}">${esc(
 async function vHome(){const news=await q(sb.from("news").select("*").order("created_at",{ascending:false}).limit(2));
  const nw=`<h2>${t("latest")}</h2>${news.map(newsCard).join("")}<button class="btn alt" onclick="go('news')">${t("allNews")}</button>`;
  if(!ME)return `<div class="hero"><h1>${t("hero")}</h1><p>${t("heroP")}</p><button class="btn y" onclick="mode='login';go('account')">${t("login")}</button><button class="btn ghost" onclick="go('subjects')">${t("browse")}</button></div>
- <h2>${t("subjects")}</h2><div class="subs">${SUBJ.map((s,i)=>`<div class="sub c${i}" onclick="openSub('${s}')"><span class="ic">${ICON[s]}</span><div><b>${t(s)}</b></div></div>`).join("")}</div>${nw}`;
+ ${installCard()}<h2>${t("subjects")}</h2><div class="subs">${SUBJ.map((s,i)=>`<div class="sub c${i}" onclick="openSub('${s}')"><span class="ic">${ICON[s]}</span><div><b>${t(s)}</b></div></div>`).join("")}</div>${nw}`;
  let extra="";
  if(ME.role=="student"){const s=await q(sb.from("submissions").select("marks,assignments(max_marks)").eq("student_id",ME.id).not("marks","is",null));
   const tot=s.reduce((a,x)=>a+x.marks,0),mx=s.reduce((a,x)=>a+(x.assignments?x.assignments.max_marks:0),0),pct=mx?Math.round(100*tot/mx):0;
   extra=`<div class="card"><h3>${t("marks")}</h3><div class="mark">${tot} / ${mx}</div><div class="bar"><i style="width:${pct}%"></i></div><small>${t("avg")}: ${mx?pct+"%":"-"}</small></div>`}
- return `<div class="card"><h3>👋 ${esc(nm(ME))} <span class="tag">${t(ME.role)}</span></h3><small>@${esc(ME.username)}</small></div>${extra}${nw}`}
+ return `<div class="card"><h3>👋 ${esc(nm(ME))} <span class="tag">${t(ME.role)}</span></h3><small>@${esc(ME.username)}</small><br><button class="btn sm alt" onclick="go('profile')">👤 ${t("profile")}</button></div>${installCard()}${extra}${nw}`}
 async function vSubjects(){
  if(sj){const tc=await q(sb.from("profiles").select("id,full_name,username").eq("role","teacher"));
   return `<button class="back" onclick="sj=null;render()">${L=="ar"?"→":"←"} ${t("backL")}</button><div class="sub c${SUBJ.indexOf(sj)}" style="min-height:110px"><span class="ic">${ICON[sj]}</span><b style="font-size:22px">${t(sj)}</b><small>${TOP[sj][L].length} ${t("lessons")} · ${t("free")}</small></div>
@@ -141,9 +154,11 @@ function vAccount(){const reg=false;return `<div class="card"><h3>${reg?t("newAc
  </div>`}
 async function vBook(){const tc=await q(sb.from("profiles").select("id,full_name,username").eq("role","teacher"));
  return `<div class="card"><h3>${t("book")}</h3>${t("subject")}${subjSel("sj",sj)}${t("teacherL")}${sel("tc",tc)}${t("slot")}<input id="sl" type="datetime-local"><textarea id="nt" placeholder="${t("note")}"></textarea><button class="btn" onclick="addReq()">${t("send")}</button></div>`}
+const CT={};
+const remBtn=r=>{const w=CT[r.student_id];if(!w)return`<small>${t("nowa")}</small>`;const m=t("hello")+" "+nm(r.s)+"\n"+t("remMsg")+": "+t(r.subj)+" "+t("withT")+" "+nm(r.t)+" "+t("onT")+" "+String(r.slot).replace("T"," ")+(r.meet_link?"\n"+t("joinL")+": "+r.meet_link:"");return`<a class="btn sm" style="background:#25d366" href="${esc(waLink(w,m))}" target="_blank" rel="noopener">💬 ${t("remind")}</a>`};
 const reqCard=(r,act)=>`<div class="card"><b>${ICON[r.subj]} ${t(r.subj)}</b> ${tag(r.status)}<br><small>${esc(nm(r.s))} / ${esc(nm(r.t))} / ${esc(String(r.slot).replace("T"," "))}</small>${r.note?`<p>${esc(r.note)}</p>`:""}${r.reply?`<p>✉ ${esc(r.reply)}</p>`:""}
-${r.status=="approved"&&r.meet_link?`<p><a class="btn sm y" href="${esc(r.meet_link)}" target="_blank" rel="noopener">🎥 ${t("openMeet")}</a></p>`:""}${act&&r.status=="approved"?`<input id="ml${r.id}" placeholder="${t("meet")}" value="${esc(r.meet_link||"")}"><button class="btn sm" onclick="setReq('${r.id}','approved')">${t("saveLink")}</button>`:""}${act&&r.status=="pending"?`<input id="rp${r.id}" placeholder="${t("reply")}"><input id="ml${r.id}" placeholder="${t("meet")}"><button class="btn sm" onclick="setReq('${r.id}','approved')">${t("approve")}</button><button class="btn sm red" onclick="setReq('${r.id}','declined')">${t("decline")}</button>`:""}</div>`;
-async function vReqs(act){const r=await q(sb.from("requests").select("*,s:profiles!requests_student_id_fkey(full_name,username),t:profiles!requests_teacher_id_fkey(full_name,username)").order("created_at",{ascending:false}));return r.map(x=>reqCard(x,act)).join("")+empty(r)}
+${act&&r.status=="approved"?`<p>${remBtn(r)}</p>`:""}${r.status=="approved"&&r.meet_link?`<p><a class="btn sm y" href="${esc(r.meet_link)}" target="_blank" rel="noopener">🎥 ${t("openMeet")}</a></p>`:""}${act&&r.status=="approved"?`<input id="ml${r.id}" placeholder="${t("meet")}" value="${esc(r.meet_link||"")}"><button class="btn sm" onclick="setReq('${r.id}','approved')">${t("saveLink")}</button>`:""}${act&&r.status=="pending"?`<input id="rp${r.id}" placeholder="${t("reply")}"><input id="ml${r.id}" placeholder="${t("meet")}"><button class="btn sm" onclick="setReq('${r.id}','approved')">${t("approve")}</button><button class="btn sm red" onclick="setReq('${r.id}','declined')">${t("decline")}</button>`:""}</div>`;
+async function vReqs(act){if(act){(await q(sb.from("contacts").select("user_id,whatsapp"))).forEach(c=>CT[c.user_id]=c.whatsapp)}const r=await q(sb.from("requests").select("*,s:profiles!requests_student_id_fkey(full_name,username),t:profiles!requests_teacher_id_fkey(full_name,username)").order("created_at",{ascending:false}));return r.map(x=>reqCard(x,act)).join("")+empty(r)}
 async function vAsg(){const a=await q(sb.from("assignments").select("*,p:profiles!assignments_teacher_id_fkey(full_name,username)").order("created_at",{ascending:false}));
  const subs=await q(sb.from("submissions").select("*,s:profiles!submissions_student_id_fkey(full_name,username)"));const st=ME.role=="student";let h="";
  for(const x of a){const mine=subs.find(y=>y.assignment_id==x.id&&y.student_id==ME.id);
@@ -165,19 +180,20 @@ async function vMats(){const m=await q(sb.from("materials").select("*").order("c
 async function vAtt(){const a=await q(sb.from("attendance").select("*,s:profiles!attendance_student_id_fkey(full_name,username)").order("day",{ascending:false}).limit(50));let h="";
  if(ME.role=="teacher"){const ss=await q(sb.from("profiles").select("id,full_name,username").eq("role","student"));h=ss.map(s=>`<div class="card"><b>${esc(nm(s))}</b><br><button class="btn sm" onclick="markAtt('${s.id}','present')">${t("present")}</button><button class="btn sm red" onclick="markAtt('${s.id}','absent')">${t("absent")}</button></div>`).join("")}
  return h+a.map(x=>`<div class="card">${x.day} ${ME.role!="student"?esc(nm(x.s)):""} ${tag(x.status)}</div>`).join("")+(h?"":empty(a))}
-async function vUsers(){const p=await q(sb.from("profiles").select("*").order("created_at"));
- return p.map(x=>`<div class="card">${x.role=="teacher"?"👤":x.role=="admin"?"🛡️":"🎓"} <b>${esc(nm(x))}</b> <small>@${esc(x.username)}</small> <span class="tag">${t(x.role)}</span></div>`).join("")+
- `<div class="card"><h3>${t("newUser")}</h3><select id="tr"><option value="student">${t("student")}</option><option value="teacher">${t("teacher")}</option></select><input id="tn" placeholder="${t("fullname")}"><input id="tu" placeholder="${t("username")}" autocapitalize="none"><input id="tp" type="password" placeholder="${t("password")}" autocomplete="new-password"><button class="btn" onclick="addUser()">${t("add")}</button></div>`}
+async function vUsers(){const p=await q(sb.from("profiles").select("*").order("created_at"));const cts={};(await q(sb.from("contacts").select("user_id,whatsapp"))).forEach(c=>cts[c.user_id]=c.whatsapp);
+ return p.map(x=>`<div class="card">${x.role=="teacher"?"👤":x.role=="admin"?"🛡️":"🎓"} <b>${esc(nm(x))}</b> <small>@${esc(x.username)}</small> <span class="tag">${t(x.role)}</span>${cts[x.id]?` <a href="${esc(waLink(cts[x.id],t("hello")+" "+nm(x)))}" target="_blank" rel="noopener">💬</a>`:""}</div>`).join("")+
+ `<div class="card"><h3>${t("newUser")}</h3><select id="tr"><option value="student">${t("student")}</option><option value="teacher">${t("teacher")}</option></select><input id="tn" placeholder="${t("fullname")}"><input id="tu" placeholder="${t("username")}" autocapitalize="none"><input id="tw" type="tel" placeholder="${t("wa")}"><input id="tp" type="password" placeholder="${t("password")}" autocomplete="new-password"><button class="btn" onclick="addUser()">${t("add")}</button></div>`}
 const PUB=[["home","🏠"],["subjects","📚"],["news","📢"],["account","👤"]];
 const TABS={student:[["home","🏠"],["subjects","📚"],["book","➕"],["mine","📅"],["asg","📝"],["marks","🏅"]],teacher:[["home","🏠"],["reqs","📥"],["asg","📝"],["mats","📎"],["att","✅"]],admin:[["home","🏠"],["reqs","📥"],["users","🎓"],["news","📢"],["att","✅"]]};
 async function view(){switch(tab){case"home":return vHome();case"subjects":return vSubjects();case"news":return vNews();case"account":return ME?vHome():vAccount();
- case"book":return vBook();case"mine":case"reqs":return vReqs(tab=="reqs");case"asg":return vAsg();case"marks":return vMarks();case"mats":return vMats();case"att":return vAtt();case"users":return vUsers()}return""}
+ case"book":return vBook();case"mine":case"reqs":return vReqs(tab=="reqs");case"asg":return vAsg();case"marks":return vMarks();case"mats":return vMats();case"att":return vAtt();case"users":return vUsers();case"profile":return vProfile()}return""}
 let rn=0;
 async function render(){const my=++rn;document.documentElement.lang=L;document.documentElement.dir=L=="ar"?"rtl":"ltr";document.getElementById("title").textContent=t("app");
- const o=document.getElementById("out");o.textContent=ME?t("logout"):t("login");o.onclick=ME?logout:()=>{mode="login";go("account")};
+ document.getElementById("inst").style.display=(DIP&&!isStandalone())?"":"none";document.getElementById("inst").textContent="📲 "+t("install");const o=document.getElementById("out");o.textContent=ME?t("logout"):t("login");o.onclick=ME?logout:()=>{mode="login";go("account")};
  if(!ME&&!["home","subjects","news","account"].includes(tab))tab="home";
  const tabs=ME?TABS[ME.role]:PUB;document.getElementById("nav").innerHTML=tabs.map(([k,i])=>`<button class="${k==tab?"on":""}" onclick="go('${k}')"><span>${i}</span>${t(k)}</button>`).join("");
  let h;try{h=await view()}catch(e){console.error(e);h=`<p class="err">${esc(e.message)}</p>`}
  if(my!=rn)return;document.getElementById("app").innerHTML=h}
+if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
 (async()=>{await loadMe();render()})();
 </script></body></html>
