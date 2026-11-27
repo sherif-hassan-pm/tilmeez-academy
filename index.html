@@ -2,6 +2,7 @@
 <html lang="ar" dir="rtl"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0f766e">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="manifest" href="manifest.json"><link rel="icon" href="icon.svg">
 <title>أكاديمية تلميذ | Tilmeez Academy</title>
 <style>
@@ -35,110 +36,144 @@ nav button span{font-size:20px}nav button.on{color:var(--g);font-weight:700}
 .lesson{display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid #eef2f7}.lesson:last-child{border:0}.lesson i{font-style:normal;background:#e6f4f1;border-radius:10px;width:34px;height:34px;display:grid;place-items:center;color:var(--g);font-weight:700}
 .back{background:none;border:0;color:var(--g);font-weight:700;cursor:pointer;padding:6px 2px}
 .foot{text-align:center;color:var(--mut);font-size:12px;margin:18px 0}
+.err{color:#b91c1c;font-size:14px}.mark{font-size:22px;font-weight:700;color:var(--g)}.row{display:flex;gap:8px}.row>*{flex:1}.pill{display:inline-block;margin:2px;padding:3px 10px;border-radius:99px;background:#e6f4f1;color:#0f766e;font-size:12px}.bar{height:8px;background:#e2e8f0;border-radius:9px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--g),var(--y))}
 </style></head><body>
 <header><div class="logo" onclick="go('home')"><i>✦</i><span id="title"></span></div><span><button class="btn ghost sm" onclick="toggleLang()">EN / عربي</button> <button class="btn ghost sm" id="out" onclick="logout()"></button></span></header>
 <main id="app"></main><nav id="nav"></nav>
 <script>
-const T={ar:{app:"أكاديمية تلميذ",tag:"تعلّم بنور المعرفة",hero:"تعليم أونلاين مع أفضل المدرسين",heroP:"لغة عربية، إنجليزية، علوم إسلامية ودراسات اجتماعية. احجز حصتك واتعلم من بيتك.",
-start:"سجّل واحجز حصة",browse:"استكشف المواد",login:"دخول",logout:"خروج",name:"الاسم",enter:"دخول",register:"حساب جديد",asRole:"الدخول كـ",
-home:"الرئيسية",subjects:"المواد",news:"الإعلانات",account:"حسابي",book:"حجز حصة",mine:"حصصي",mats:"المواد",asg:"الواجبات",att:"الحضور",reqs:"الطلبات",students:"الطلاب",teachers:"المدرسين",
+const SB_URL="https://ovzpowzgpbamanuqklkf.supabase.co",SB_KEY="sb_publishable_e9glKLnO1Yw2EAOx0ZUJNA_caWLLnhf";
+const sb=supabase.createClient(SB_URL,SB_KEY);
+const T={ar:{app:"أكاديمية تلميذ",hero:"تعليم أونلاين مع أفضل المدرسين",heroP:"لغة عربية، إنجليزية، علوم إسلامية ودراسات اجتماعية. احجز حصتك واتعلم من بيتك.",
+start:"سجّل واحجز حصة",browse:"استكشف المواد",login:"دخول",logout:"خروج",username:"اسم المستخدم",password:"كلمة المرور",fullname:"الاسم الكامل",register:"حساب جديد",newAcc:"إنشاء حساب طالب",
+home:"الرئيسية",subjects:"المواد",news:"الإعلانات",account:"حسابي",book:"حجز حصة",mine:"حصصي",asg:"الواجبات",marks:"الدرجات",att:"الحضور",reqs:"الطلبات",users:"المستخدمين",mats:"المواد التعليمية",
 student:"طالب",teacher:"مدرس",admin:"أدمن",ar:"اللغة العربية",en:"اللغة الإنجليزية",is:"العلوم الإسلامية",so:"الاجتماعيات",
 subject:"المادة",teacherL:"المدرس",slot:"التاريخ والوقت المفضل",note:"ملاحظة للأكاديمية",send:"إرسال الطلب",pending:"قيد الانتظار",approved:"تمت الموافقة",declined:"مرفوض",
-approve:"موافقة",decline:"رفض",reply:"رد",title:"العنوان",link:"رابط أو نص",add:"إضافة",due:"موعد التسليم",present:"حاضر",absent:"غائب",newTeacher:"إضافة مدرس",
-nothing:"لا يوجد شيء بعد",submit:"تسليم الإجابة",answer:"إجابتك",submitted:"تم التسليم",topics:"محتوى المادة",bookThis:"احجز حصة في هذه المادة",backL:"رجوع",
-latest:"آخر الإعلانات",allNews:"كل الإعلانات",post:"نشر إعلان",body:"النص",stT:"مدرس",stS:"مادة",stC:"حصة",demo:"نسخة تجريبية: التلميذات محفوظة على هذا الجهاز فقط.",loginFirst:"سجّل الدخول لحجز حصة",
-lessons:"دروس",free:"متاح للجميع"},
-en:{app:"Tilmeez Academy",tag:"Learn by the light of knowledge",hero:"Online learning with great teachers",heroP:"Arabic, English, Islamic studies and social studies. Book a class and learn from home.",
-start:"Sign up and book a class",browse:"Explore subjects",login:"Log in",logout:"Log out",name:"Name",enter:"Enter",register:"New account",asRole:"Sign in as",
-home:"Home",subjects:"Subjects",news:"News",account:"Account",book:"Book class",mine:"My classes",mats:"Materials",asg:"Assignments",att:"Attendance",reqs:"Requests",students:"Students",teachers:"Teachers",
+approve:"موافقة",decline:"رفض",reply:"رد",title:"العنوان",desc:"الوصف",link:"رابط أو نص",add:"إضافة",due:"موعد التسليم",maxm:"الدرجة الكاملة",present:"حاضر",absent:"غائب",newTeacher:"إضافة مدرس",
+nothing:"لا يوجد شيء بعد",submit:"تسليم الإجابة",answer:"إجابتك",submitted:"تم التسليم",graded:"تم التصحيح",topics:"محتوى المادة",bookThis:"احجز حصة في هذه المادة",backL:"رجوع",
+latest:"آخر الإعلانات",allNews:"كل الإعلانات",post:"نشر إعلان",body:"النص",lessons:"دروس",free:"متاح للجميع",loginFirst:"سجّل الدخول لحجز حصة",teachers:"المدرسين",
+mark:"الدرجة",feedback:"ملاحظات المدرس",save:"حفظ",subs:"التسليمات",avg:"النسبة",del:"حذف",bad:"اسم المستخدم أو كلمة المرور غير صحيحة",short:"كلمة المرور 6 أحرف على الأقل",baduser:"اسم المستخدم: حروف إنجليزية وأرقام و _ فقط (3 إلى 20)",
+taken:"اسم المستخدم مستخدم",created:"تم إنشاء الحساب"},
+en:{app:"Tilmeez Academy",hero:"Online learning with great teachers",heroP:"Arabic, English, Islamic studies and social studies. Book a class and learn from home.",
+start:"Sign up and book a class",browse:"Explore subjects",login:"Log in",logout:"Log out",username:"Username",password:"Password",fullname:"Full name",register:"New account",newAcc:"Create student account",
+home:"Home",subjects:"Subjects",news:"News",account:"Account",book:"Book class",mine:"My classes",asg:"Assignments",marks:"Marks",att:"Attendance",reqs:"Requests",users:"Users",mats:"Materials",
 student:"Student",teacher:"Teacher",admin:"Admin",ar:"Arabic",en:"English",is:"Islamic Studies",so:"Social Studies",
 subject:"Subject",teacherL:"Teacher",slot:"Preferred date and time",note:"Note to the academy",send:"Send request",pending:"pending",approved:"approved",declined:"declined",
-approve:"Approve",decline:"Decline",reply:"Reply",title:"Title",link:"Link or text",add:"Add",due:"Due date",present:"present",absent:"absent",newTeacher:"Add teacher",
-nothing:"Nothing yet",submit:"Submit answer",answer:"Your answer",submitted:"Submitted",topics:"Subject content",bookThis:"Book a class in this subject",backL:"Back",
-latest:"Latest announcements",allNews:"All announcements",post:"Post announcement",body:"Text",stT:"teachers",stS:"subjects",stC:"classes",demo:"Prototype: data is saved only on this browser.",loginFirst:"Log in to book a class",
-lessons:"lessons",free:"Open to all"}};
+approve:"Approve",decline:"Decline",reply:"Reply",title:"Title",desc:"Description",link:"Link or text",add:"Add",due:"Due date",maxm:"Max marks",present:"present",absent:"absent",newTeacher:"Add teacher",
+nothing:"Nothing yet",submit:"Submit answer",answer:"Your answer",submitted:"Submitted",graded:"Graded",topics:"Subject content",bookThis:"Book a class in this subject",backL:"Back",
+latest:"Latest announcements",allNews:"All announcements",post:"Post announcement",body:"Text",lessons:"lessons",free:"Open to all",loginFirst:"Log in to book a class",teachers:"Teachers",
+mark:"Marks",feedback:"Teacher feedback",save:"Save",subs:"Submissions",avg:"Average",del:"Delete",bad:"Wrong username or password",short:"Password must be at least 6 characters",baduser:"Username: English letters, numbers and _ only (3 to 20)",
+taken:"Username is taken",created:"Account created"}};
 const SUBJ=["ar","en","is","so"],ICON={ar:"✍️",en:"🌍",is:"🕌",so:"🧭"};
 const TOP={ar:{ar:["الحروف والنطق","القراءة والفهم","النحو الأساسي","الإملاء والكتابة","التعبير والمحادثة"],en:["Letters and pronunciation","Reading comprehension","Basic grammar","Spelling and writing","Expression and conversation"]},
 en:{ar:["Phonics and the alphabet","Everyday vocabulary","Grammar and tenses","Reading and writing","Speaking practice"],en:["Phonics and the alphabet","Everyday vocabulary","Grammar and tenses","Reading and writing","Speaking practice"]},
 is:{ar:["تجويد وتلاوة القرآن","حفظ السور القصيرة","السيرة النبوية","الأخلاق والآداب","الفقه المبسط"],en:["Quran recitation and tajweed","Memorizing short surahs","Prophet's biography","Manners and ethics","Simple fiqh"]},
 so:{ar:["الجغرافيا والخرائط","التاريخ","التربية الوطنية","الحضارات والثقافات","مهارات التفكير"],en:["Geography and maps","History","Civics","Civilizations and cultures","Thinking skills"]}};
-let L=localStorage.lang||"ar",U=JSON.parse(localStorage.user||"null"),tab="home",sj=null,mode="login";
+let L=localStorage.lang||"ar",ME=null,tab="home",sj=null,mode="login",msg="",busy=false;
 const t=k=>T[L][k]||k;
-const today=new Date().toISOString().slice(0,10);
-let D=JSON.parse(localStorage.db2||"null")||{teachers:[{id:"t1",name:"أ. أحمد",subj:["ar","is"]},{id:"t2",name:"Ms. Sara",subj:["en","so"]}],students:[],
-reqs:[],mats:[{id:1,subj:"en",title:"Week 1 worksheet",link:"https://example.com/worksheet"}],asg:[{id:1,subj:"en",title:"Write 5 sentences about your day",due:"2026-12-05",subs:{}}],att:[],
-news:[{id:1,date:"2026-11-27",ti:"افتتاح التسجيل للفصل الجديد",ti_en:"Registration opens for the new term",tx:"باب التسجيل مفتوح في جميع المواد. احجز حصة تجريبية الآن.",tx_en:"Registration is open in all subjects. Book a trial class now."},
-{id:2,date:"2026-11-25",ti:"حلقات تحفيظ جديدة",ti_en:"New Quran memorization circles",tx:"حلقات مسائية للأطفال من سن 6 إلى 12 سنة.",tx_en:"Evening circles for children aged 6 to 12."},
-{id:3,date:"2026-11-20",ti:"حصص محادثة بالإنجليزية",ti_en:"English conversation classes",tx:"مجموعات صغيرة مع مدرسين متخصصين.",tx_en:"Small groups with specialist teachers."}]};
-const save=()=>localStorage.db2=JSON.stringify(D);
-const uid=()=>Math.random().toString(36).slice(2,8);
-const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const tn=id=>(D.teachers.find(x=>x.id==id)||{}).name||"-";
-const sn=id=>(D.students.find(x=>x.id==id)||{}).name||"-";
+const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const val=id=>document.getElementById(id).value;
-const go=k=>{tab=k;sj=null;render();scrollTo(0,0)};
+const EM=u=>u.toLowerCase()+"@tilmeez.app";
+const go=k=>{tab=k;sj=null;msg="";render();scrollTo(0,0)};
 function toggleLang(){L=L=="ar"?"en":"ar";localStorage.lang=L;render()}
-function logout(){U=null;localStorage.removeItem("user");go("home")}
-function login(role){const n=val("nm").trim();if(!n)return alert(t("name"));let id;
- if(role=="student"){let s=D.students.find(x=>x.name==n);if(!s){s={id:uid(),name:n};D.students.push(s)}id=s.id}
- else if(role=="teacher"){id=(D.teachers.find(x=>x.name==n)||D.teachers[0]).id}else id="admin";
- save();U={role,id,name:n};localStorage.user=JSON.stringify(U);go(sj0||"home");sj0=null}
-let sj0=null;
-const subjSel=id=>`<select id="${id}">${SUBJ.map(s=>`<option value="${s}">${t(s)}</option>`).join("")}</select>`;
-const sel=(id,a)=>`<select id="${id}">${a.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join("")}</select>`;
+async function loadMe(){const {data:{session}}=await sb.auth.getSession();if(!session){ME=null;return}
+ const {data}=await sb.from("profiles").select("*").eq("id",session.user.id).single();ME=data||null}
+async function doLogin(){msg="";const u=val("un").trim(),p=val("pw");
+ const {error}=await sb.auth.signInWithPassword({email:EM(u),password:p});if(error){msg=t("bad");return render()}
+ await loadMe();tab="home";render()}
+async function doRegister(){msg="";const u=val("un").trim().toLowerCase(),p=val("pw"),n=val("fn").trim();
+ if(!/^[a-z0-9_]{3,20}$/.test(u)){msg=t("baduser");return render()}if(p.length<6){msg=t("short");return render()}
+ const {error}=await sb.auth.signUp({email:EM(u),password:p,options:{data:{full_name:n||u}}});
+ if(error){msg=/registered|exists/i.test(error.message)?t("taken"):error.message;return render()}
+ await loadMe();tab="home";render()}
+async function logout(){await sb.auth.signOut();ME=null;go("home")}
+async function q(p){const {data,error}=await p;if(error){console.error(error);return[]}return data||[]}
 const tag=s=>`<span class="tag ${s}">${t(s)}</span>`;
 const empty=a=>a.length?"":`<p><small>${t("nothing")}</small></p>`;
-function addReq(){const r={id:uid(),sid:U.id,subj:val("sj"),tid:val("tc"),slot:val("sl"),note:val("nt"),status:"pending",reply:""};if(!r.slot)return alert(t("slot"));D.reqs.push(r);save();go("mine")}
-function setReq(id,s){const r=D.reqs.find(x=>x.id==id);r.status=s;const e=document.getElementById("rp"+id);if(e)r.reply=e.value;save();render()}
-function addMat(){if(!val("mt"))return;D.mats.push({id:uid(),subj:val("ms"),title:val("mt"),link:val("ml")});save();render()}
-function addAsg(){if(!val("at"))return;D.asg.push({id:uid(),subj:val("as"),title:val("at"),due:val("ad"),subs:{}});save();render()}
-function sub(id){D.asg.find(x=>x.id==id).subs[U.id]=val("an"+id);save();render()}
-function mark(sid,st){D.att.push({id:uid(),sid,tid:U.id,date:today,st});save();render()}
-function addT(){if(!val("tnm"))return;D.teachers.push({id:uid(),name:val("tnm"),subj:[val("tsj")]});save();render()}
-function addN(){if(!val("nti"))return;D.news.unshift({id:uid(),date:today,ti:val("nti"),ti_en:val("nti"),tx:val("ntx"),tx_en:val("ntx")});save();render()}
+const fmtDate=d=>String(d||"").slice(0,10);
+const nm=p=>p?(p.full_name||p.username):"-";
+const newsCard=n=>`<div class="card news"><small>${fmtDate(n.created_at)}</small><h3>${esc(L=="ar"?n.title:n.title_en)}</h3>${esc(L=="ar"?n.body:n.body_en)}</div>`;
+async function act(fn){if(busy)return;busy=true;try{await fn()}catch(e){console.error(e);alert(e.message||e)}busy=false;render()}
+const addReq=()=>act(async()=>{const slot=val("sl");if(!slot)return alert(t("slot"));const {error}=await sb.from("requests").insert({student_id:ME.id,teacher_id:val("tc"),subj:val("sj"),slot,note:val("nt")});if(error)throw error;tab="mine"});
+const setReq=(id,s)=>act(async()=>{const e=document.getElementById("rp"+id);const {error}=await sb.from("requests").update({status:s,reply:e?e.value:null}).eq("id",id);if(error)throw error});
+const addMat=()=>act(async()=>{if(!val("mt"))return;const {error}=await sb.from("materials").insert({subj:val("ms"),title:val("mt"),link:val("ml"),created_by:ME.id});if(error)throw error});
+const addAsg=()=>act(async()=>{if(!val("at"))return;const {error}=await sb.from("assignments").insert({subj:val("as"),title:val("at"),description:val("ad0"),due:val("ad")||null,max_marks:+val("am")||100,teacher_id:ME.id});if(error)throw error});
+const delAsg=id=>act(async()=>{if(!confirm(t("del")+"?"))return;const {error}=await sb.from("assignments").delete().eq("id",id);if(error)throw error});
+const subAns=id=>act(async()=>{const a=val("an"+id);if(!a.trim())return;const {error}=await sb.from("submissions").upsert({assignment_id:id,student_id:ME.id,answer:a},{onConflict:"assignment_id,student_id"});if(error)throw error});
+const gradeSub=(id,max)=>act(async()=>{const m=parseFloat(val("mk"+id));if(isNaN(m)||m<0||m>max)return alert(t("maxm")+": "+max);const {error}=await sb.from("submissions").update({marks:m,feedback:val("fb"+id),graded_at:new Date().toISOString()}).eq("id",id);if(error)throw error});
+const markAtt=(sid,st)=>act(async()=>{const {error}=await sb.from("attendance").insert({student_id:sid,teacher_id:ME.id,status:st});if(error)throw error});
+const addN=()=>act(async()=>{if(!val("nti"))return;const {error}=await sb.from("news").insert({title:val("nti"),title_en:val("nti"),body:val("ntx"),body_en:val("ntx")});if(error)throw error});
+const delN=id=>act(async()=>{const {error}=await sb.from("news").delete().eq("id",id);if(error)throw error});
+const addTeacher=()=>act(async()=>{const u=val("tu").trim().toLowerCase(),p=val("tp"),n=val("tn").trim();
+ if(!/^[a-z0-9_]{3,20}$/.test(u))return alert(t("baduser"));if(p.length<6)return alert(t("short"));
+ const c2=supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:false,autoRefreshToken:false,storageKey:"tmp"}});
+ const {data,error}=await c2.auth.signUp({email:EM(u),password:p,options:{data:{full_name:n||u}}});if(error)throw error;
+ const {error:e2}=await sb.from("profiles").update({role:"teacher",full_name:n||u}).eq("id",data.user.id);if(e2)throw e2;alert(t("created")+": "+u)});
 function openSub(s){sj=s;tab="subjects";render();scrollTo(0,0)}
-function bookSub(s){if(!U){sj0="book";mode="login";tab="account";sj=null;render();return}tab="book";sj=s;render()}
-const mine=()=>D.reqs.filter(r=>U.role=="student"?r.sid==U.id:U.role=="teacher"?r.tid==U.id:true);
-const nTi=n=>L=="ar"?n.ti:n.ti_en,nTx=n=>L=="ar"?n.tx:n.tx_en;
-const newsCard=n=>`<div class="card news"><small>${n.date}</small><h3>${esc(nTi(n))}</h3>${esc(nTx(n))}</div>`;
-const reqCard=(r,act)=>`<div class="card"><b>${ICON[r.subj]} ${t(r.subj)}</b> ${tag(r.status)}<br><small>${esc(sn(r.sid))} / ${esc(tn(r.tid))} / ${esc(r.slot.replace("T"," "))}</small>${r.note?`<p>${esc(r.note)}</p>`:""}${r.reply?`<p>✉ ${esc(r.reply)}</p>`:""}
-${act&&r.status=="pending"?`<input id="rp${r.id}" placeholder="${t("reply")}"><button class="btn sm" onclick="setReq('${r.id}','approved')">${t("approve")}</button><button class="btn sm red" onclick="setReq('${r.id}','declined')">${t("decline")}</button>`:""}</div>`;
-function subjectsView(){
- if(sj){const tc=D.teachers.filter(x=>x.subj.includes(sj));return `<button class="back" onclick="sj=null;render()">${L=="ar"?"→":"←"} ${t("backL")}</button>
- <div class="sub c${SUBJ.indexOf(sj)}" style="min-height:110px"><span class="ic">${ICON[sj]}</span><b style="font-size:22px">${t(sj)}</b><small>${TOP[sj][L].length} ${t("lessons")} · ${t("free")}</small></div>
- <h2>${t("topics")}</h2><div class="card">${TOP[sj][L].map((x,i)=>`<div class="lesson"><i>${i+1}</i><span>${x}</span></div>`).join("")}</div>
- <h2>${t("teachers")}</h2>${tc.map(x=>`<div class="card">👤 ${esc(x.name)}</div>`).join("")}
- <button class="btn y" style="width:100%;padding:14px" onclick="bookSub('${sj}')">${U?t("bookThis"):t("loginFirst")}</button>`}
+function bookSub(s){if(!ME){mode="login";tab="account";sj=null;render();return}tab="book";sj=s;render()}
+const subjSel=(id,sel)=>`<select id="${id}">${SUBJ.map(s=>`<option value="${s}" ${s==sel?"selected":""}>${t(s)}</option>`).join("")}</select>`;
+const sel=(id,a)=>`<select id="${id}">${a.map(x=>`<option value="${x.id}">${esc(nm(x))}</option>`).join("")}</select>`;
+async function vHome(){const news=await q(sb.from("news").select("*").order("created_at",{ascending:false}).limit(2));
+ const nw=`<h2>${t("latest")}</h2>${news.map(newsCard).join("")}<button class="btn alt" onclick="go('news')">${t("allNews")}</button>`;
+ if(!ME)return `<div class="hero"><h1>${t("hero")}</h1><p>${t("heroP")}</p><button class="btn y" onclick="mode='reg';go('account')">${t("start")}</button><button class="btn ghost" onclick="go('subjects')">${t("browse")}</button></div>
+ <h2>${t("subjects")}</h2><div class="subs">${SUBJ.map((s,i)=>`<div class="sub c${i}" onclick="openSub('${s}')"><span class="ic">${ICON[s]}</span><div><b>${t(s)}</b></div></div>`).join("")}</div>${nw}`;
+ let extra="";
+ if(ME.role=="student"){const s=await q(sb.from("submissions").select("marks,assignments(max_marks)").eq("student_id",ME.id).not("marks","is",null));
+  const tot=s.reduce((a,x)=>a+x.marks,0),mx=s.reduce((a,x)=>a+(x.assignments?x.assignments.max_marks:0),0),pct=mx?Math.round(100*tot/mx):0;
+  extra=`<div class="card"><h3>${t("marks")}</h3><div class="mark">${tot} / ${mx}</div><div class="bar"><i style="width:${pct}%"></i></div><small>${t("avg")}: ${mx?pct+"%":"-"}</small></div>`}
+ return `<div class="card"><h3>👋 ${esc(nm(ME))} <span class="tag">${t(ME.role)}</span></h3><small>@${esc(ME.username)}</small></div>${extra}${nw}`}
+async function vSubjects(){
+ if(sj){const tc=await q(sb.from("profiles").select("id,full_name,username").eq("role","teacher"));
+  return `<button class="back" onclick="sj=null;render()">${L=="ar"?"→":"←"} ${t("backL")}</button><div class="sub c${SUBJ.indexOf(sj)}" style="min-height:110px"><span class="ic">${ICON[sj]}</span><b style="font-size:22px">${t(sj)}</b><small>${TOP[sj][L].length} ${t("lessons")} · ${t("free")}</small></div>
+  <h2>${t("topics")}</h2><div class="card">${TOP[sj][L].map((x,i)=>`<div class="lesson"><i>${i+1}</i><span>${x}</span></div>`).join("")}</div>
+  <h2>${t("teachers")}</h2>${tc.map(x=>`<div class="card">👤 ${esc(nm(x))}</div>`).join("")}${empty(tc)}
+  <button class="btn y" style="width:100%;padding:14px" onclick="bookSub('${sj}')">${ME?t("bookThis"):t("loginFirst")}</button>`}
  return `<h2>${t("subjects")}</h2><div class="subs">${SUBJ.map((s,i)=>`<div class="sub c${i}" onclick="openSub('${s}')"><span class="ic">${ICON[s]}</span><div><b>${t(s)}</b><br><small>${TOP[s][L].length} ${t("lessons")}</small></div></div>`).join("")}</div>`}
-function homeView(){
- if(U)return `<div class="card"><h3>👋 ${esc(U.name)} <span class="tag">${t(U.role)}</span></h3><div class="grid3"><div><b>${mine().length}</b>${t("reqs")}</div><div><b>${D.students.length}</b>${t("students")}</div><div><b>${D.mats.length}</b>${t("mats")}</div></div></div>
- <h2>${t("latest")}</h2>${D.news.slice(0,2).map(newsCard).join("")}`;
- return `<div class="hero"><h1>${t("hero")}</h1><p>${t("heroP")}</p><button class="btn y" onclick="mode='reg';go('account')">${t("start")}</button><button class="btn ghost" onclick="go('subjects')">${t("browse")}</button>
- <div class="stats"><div><b>${D.teachers.length}</b>${t("stT")}</div><div><b>4</b>${t("stS")}</div><div><b>20+</b>${t("stC")}</div></div></div>
- <h2>${t("subjects")}</h2><div class="subs">${SUBJ.map((s,i)=>`<div class="sub c${i}" onclick="openSub('${s}')"><span class="ic">${ICON[s]}</span><div><b>${t(s)}</b></div></div>`).join("")}</div>
- <h2>${t("latest")}</h2>${D.news.slice(0,2).map(newsCard).join("")}<button class="btn alt" onclick="go('news')">${t("allNews")}</button><div class="foot">${t("demo")}</div>`}
-function accountView(){return `<div class="card"><h3>${mode=="reg"?t("register"):t("login")}</h3><input id="nm" placeholder="${t("name")}"><small>${t("asRole")}</small><br>${["student","teacher","admin"].map(r=>`<button class="btn" onclick="login('${r}')">${t(r)}</button>`).join("")}<p><small>${t("demo")}</small></p></div>`}
-function matsView(add){return D.mats.map(m=>`<div class="card"><b>${esc(m.title)}</b> <span class="tag">${ICON[m.subj]} ${t(m.subj)}</span><br>${/^https?:/.test(m.link)?`<a href="${esc(m.link)}" target="_blank">${esc(m.link)}</a>`:esc(m.link||"")}</div>`).join("")+empty(D.mats)+
- (add?`<div class="card"><h3>${t("add")}</h3>${subjSel("ms")}<input id="mt" placeholder="${t("title")}"><input id="ml" placeholder="${t("link")}"><button class="btn" onclick="addMat()">${t("add")}</button></div>`:"")}
-function asgView(){const st=U.role=="student";return D.asg.map(a=>`<div class="card"><b>${esc(a.title)}</b> <span class="tag">${ICON[a.subj]} ${t(a.subj)}</span><br><small>${t("due")}: ${esc(a.due||"-")}</small>
- ${st?(a.subs[U.id]!=null?`<p><span class="tag approved">${t("submitted")}</span><br>${esc(a.subs[U.id])}</p>`:`<textarea id="an${a.id}" placeholder="${t("answer")}"></textarea><button class="btn sm" onclick="sub('${a.id}')">${t("submit")}</button>`)
- :Object.entries(a.subs).map(([s,v])=>`<p><b>${esc(sn(s))}:</b> ${esc(v)}</p>`).join("")}</div>`).join("")+empty(D.asg)+
- (st?"":`<div class="card"><h3>${t("add")}</h3>${subjSel("as")}<input id="at" placeholder="${t("title")}"><input id="ad" type="date"><button class="btn" onclick="addAsg()">${t("add")}</button></div>`)}
-function attView(){if(U.role=="student"){const a=D.att.filter(x=>x.sid==U.id);return a.map(x=>`<div class="card">${x.date} ${tag(x.st)}</div>`).join("")+empty(a)}
- return (U.role=="teacher"?D.students.map(s=>`<div class="card"><b>${esc(s.name)}</b><br><button class="btn sm" onclick="mark('${s.id}','present')">${t("present")}</button><button class="btn sm red" onclick="mark('${s.id}','absent')">${t("absent")}</button></div>`).join(""):"")+D.att.slice().reverse().map(x=>`<div class="card">${x.date} ${esc(sn(x.sid))} ${tag(x.st)}</div>`).join("")}
-function newsView(){return `<h2>${t("news")}</h2>`+D.news.map(newsCard).join("")+(U&&U.role=="admin"?`<div class="card"><h3>${t("post")}</h3><input id="nti" placeholder="${t("title")}"><textarea id="ntx" placeholder="${t("body")}"></textarea><button class="btn" onclick="addN()">${t("post")}</button></div>`:"")}
-function bookView(){return `<div class="card"><h3>${t("book")}</h3>${t("subject")}${subjSel("sj")}${t("teacherL")}${sel("tc",D.teachers)}${t("slot")}<input id="sl" type="datetime-local"><textarea id="nt" placeholder="${t("note")}"></textarea><button class="btn" onclick="addReq()">${t("send")}</button></div>`}
+async function vNews(){const n=await q(sb.from("news").select("*").order("created_at",{ascending:false}));const adm=ME&&ME.role=="admin";
+ return `<h2>${t("news")}</h2>`+n.map(x=>newsCard(x)+(adm?`<button class="btn sm red" onclick="delN('${x.id}')">${t("del")}</button>`:"")).join("")+
+ (adm?`<div class="card"><h3>${t("post")}</h3><input id="nti" placeholder="${t("title")}"><textarea id="ntx" placeholder="${t("body")}"></textarea><button class="btn" onclick="addN()">${t("post")}</button></div>`:"")}
+function vAccount(){const reg=mode=="reg";return `<div class="card"><h3>${reg?t("newAcc"):t("login")}</h3>
+ ${reg?`<input id="fn" placeholder="${t("fullname")}">`:""}<input id="un" placeholder="${t("username")}" autocapitalize="none" autocomplete="username"><input id="pw" type="password" placeholder="${t("password")}" autocomplete="${reg?"new-password":"current-password"}">
+ ${msg?`<p class="err">${esc(msg)}</p>`:""}<button class="btn" onclick="${reg?"doRegister()":"doLogin()"}">${reg?t("register"):t("login")}</button>
+ <button class="btn alt" onclick="mode='${reg?"login":"reg"}';msg='';render()">${reg?t("login"):t("register")}</button></div>`}
+async function vBook(){const tc=await q(sb.from("profiles").select("id,full_name,username").eq("role","teacher"));
+ return `<div class="card"><h3>${t("book")}</h3>${t("subject")}${subjSel("sj",sj)}${t("teacherL")}${sel("tc",tc)}${t("slot")}<input id="sl" type="datetime-local"><textarea id="nt" placeholder="${t("note")}"></textarea><button class="btn" onclick="addReq()">${t("send")}</button></div>`}
+const reqCard=(r,act)=>`<div class="card"><b>${ICON[r.subj]} ${t(r.subj)}</b> ${tag(r.status)}<br><small>${esc(nm(r.s))} / ${esc(nm(r.t))} / ${esc(String(r.slot).replace("T"," "))}</small>${r.note?`<p>${esc(r.note)}</p>`:""}${r.reply?`<p>✉ ${esc(r.reply)}</p>`:""}
+${act&&r.status=="pending"?`<input id="rp${r.id}" placeholder="${t("reply")}"><button class="btn sm" onclick="setReq('${r.id}','approved')">${t("approve")}</button><button class="btn sm red" onclick="setReq('${r.id}','declined')">${t("decline")}</button>`:""}</div>`;
+async function vReqs(act){const r=await q(sb.from("requests").select("*,s:profiles!requests_student_id_fkey(full_name,username),t:profiles!requests_teacher_id_fkey(full_name,username)").order("created_at",{ascending:false}));return r.map(x=>reqCard(x,act)).join("")+empty(r)}
+async function vAsg(){const a=await q(sb.from("assignments").select("*,p:profiles!assignments_teacher_id_fkey(full_name,username)").order("created_at",{ascending:false}));
+ const subs=await q(sb.from("submissions").select("*,s:profiles!submissions_student_id_fkey(full_name,username)"));const st=ME.role=="student";let h="";
+ for(const x of a){const mine=subs.find(y=>y.assignment_id==x.id&&y.student_id==ME.id);
+  h+=`<div class="card"><b>${esc(x.title)}</b> <span class="tag">${ICON[x.subj]} ${t(x.subj)}</span><br><small>${t("due")}: ${esc(x.due||"-")} · ${t("maxm")}: ${x.max_marks} · ${esc(nm(x.p))}</small>${x.description?`<p>${esc(x.description)}</p>`:""}`;
+  if(st){if(!mine)h+=`<textarea id="an${x.id}" placeholder="${t("answer")}"></textarea><button class="btn sm" onclick="subAns('${x.id}')">${t("submit")}</button>`;
+   else if(mine.marks==null)h+=`<p><span class="tag pending">${t("submitted")}</span></p><textarea id="an${x.id}">${esc(mine.answer)}</textarea><button class="btn sm alt" onclick="subAns('${x.id}')">${t("submit")}</button>`;
+   else h+=`<p><span class="tag approved">${t("graded")}</span></p><div class="mark">${mine.marks} / ${x.max_marks}</div><div class="bar"><i style="width:${Math.round(100*mine.marks/x.max_marks)}%"></i></div>${mine.feedback?`<p>✉ ${esc(mine.feedback)}</p>`:""}<p><small>${esc(mine.answer)}</small></p>`}
+  else{const ss=subs.filter(y=>y.assignment_id==x.id);h+=`<h3>${t("subs")} (${ss.length})</h3>`;
+   for(const y of ss)h+=`<div class="card" style="background:#f8fafc"><b>${esc(nm(y.s))}</b>${y.marks!=null?` <span class="pill">${y.marks}/${x.max_marks}</span>`:""}<p>${esc(y.answer)}</p><div class="row"><input id="mk${y.id}" type="number" placeholder="${t("mark")} /${x.max_marks}" value="${y.marks==null?"":y.marks}"><input id="fb${y.id}" placeholder="${t("feedback")}" value="${esc(y.feedback||"")}"></div><button class="btn sm" onclick="gradeSub('${y.id}',${x.max_marks})">${t("save")}</button></div>`;
+   h+=`<button class="btn sm red" onclick="delAsg('${x.id}')">${t("del")}</button>`}
+  h+=`</div>`}
+ if(!st)h+=`<div class="card"><h3>${t("add")}</h3>${subjSel("as")}<input id="at" placeholder="${t("title")}"><textarea id="ad0" placeholder="${t("desc")}"></textarea><div class="row"><input id="ad" type="date"><input id="am" type="number" placeholder="${t("maxm")}" value="100"></div><button class="btn" onclick="addAsg()">${t("add")}</button></div>`;
+ return h+empty(a)}
+async function vMarks(){const s=await q(sb.from("submissions").select("*,assignments(title,max_marks,subj)").eq("student_id",ME.id).not("marks","is",null).order("graded_at",{ascending:false}));
+ return `<h2>${t("marks")}</h2>`+s.map(x=>`<div class="card"><b>${esc(x.assignments.title)}</b> <span class="tag">${ICON[x.assignments.subj]} ${t(x.assignments.subj)}</span><div class="mark">${x.marks} / ${x.assignments.max_marks}</div>${x.feedback?`<p>✉ ${esc(x.feedback)}</p>`:""}</div>`).join("")+empty(s)}
+async function vMats(){const m=await q(sb.from("materials").select("*").order("created_at",{ascending:false}));
+ return m.map(x=>`<div class="card"><b>${esc(x.title)}</b> <span class="tag">${ICON[x.subj]} ${t(x.subj)}</span><br>${/^https?:/.test(x.link||"")?`<a href="${esc(x.link)}" target="_blank" rel="noopener">${esc(x.link)}</a>`:esc(x.link||"")}</div>`).join("")+empty(m)+
+ (ME.role!="student"?`<div class="card"><h3>${t("add")}</h3>${subjSel("ms")}<input id="mt" placeholder="${t("title")}"><input id="ml" placeholder="${t("link")}"><button class="btn" onclick="addMat()">${t("add")}</button></div>`:"")}
+async function vAtt(){const a=await q(sb.from("attendance").select("*,s:profiles!attendance_student_id_fkey(full_name,username)").order("day",{ascending:false}).limit(50));let h="";
+ if(ME.role=="teacher"){const ss=await q(sb.from("profiles").select("id,full_name,username").eq("role","student"));h=ss.map(s=>`<div class="card"><b>${esc(nm(s))}</b><br><button class="btn sm" onclick="markAtt('${s.id}','present')">${t("present")}</button><button class="btn sm red" onclick="markAtt('${s.id}','absent')">${t("absent")}</button></div>`).join("")}
+ return h+a.map(x=>`<div class="card">${x.day} ${ME.role!="student"?esc(nm(x.s)):""} ${tag(x.status)}</div>`).join("")+(h?"":empty(a))}
+async function vUsers(){const p=await q(sb.from("profiles").select("*").order("created_at"));
+ return p.map(x=>`<div class="card">${x.role=="teacher"?"👤":x.role=="admin"?"🛡️":"🎓"} <b>${esc(nm(x))}</b> <small>@${esc(x.username)}</small> <span class="tag">${t(x.role)}</span></div>`).join("")+
+ `<div class="card"><h3>${t("newTeacher")}</h3><input id="tn" placeholder="${t("fullname")}"><input id="tu" placeholder="${t("username")}" autocapitalize="none"><input id="tp" type="password" placeholder="${t("password")}" autocomplete="new-password"><button class="btn" onclick="addTeacher()">${t("add")}</button></div>`}
 const PUB=[["home","🏠"],["subjects","📚"],["news","📢"],["account","👤"]];
-const TABS={student:[["home","🏠"],["subjects","📚"],["book","➕"],["mine","📅"],["asg","📝"],["news","📢"]],teacher:[["home","🏠"],["reqs","📥"],["mats","📎"],["asg","📝"],["att","✅"]],admin:[["home","🏠"],["reqs","📥"],["students","🎓"],["teachers","👤"],["news","📢"]]};
-function view(){switch(tab){case"home":return homeView();case"subjects":return subjectsView();case"news":return newsView();case"account":return accountView();
- case"book":return bookView();case"mine":return mine().map(r=>reqCard(r,false)).join("")+empty(mine());case"reqs":return mine().map(r=>reqCard(r,true)).join("")+empty(mine());
- case"mats":return matsView(U.role!="student");case"asg":return asgView();case"att":return attView();
- case"students":return D.students.map(s=>`<div class="card">🎓 ${esc(s.name)}</div>`).join("")+empty(D.students);
- case"teachers":return D.teachers.map(s=>`<div class="card">👤 ${esc(s.name)} <small>${s.subj.map(t).join("، ")}</small></div>`).join("")+`<div class="card"><h3>${t("newTeacher")}</h3><input id="tnm" placeholder="${t("name")}">${subjSel("tsj")}<button class="btn" onclick="addT()">${t("add")}</button></div>`}}
-function render(){document.documentElement.lang=L;document.documentElement.dir=L=="ar"?"rtl":"ltr";document.getElementById("title").textContent=t("app");
- const o=document.getElementById("out");o.textContent=U?t("logout"):t("login");o.onclick=U?logout:()=>{mode="login";go("account")};
- if(!U&&tab!="home"&&tab!="subjects"&&tab!="news"&&tab!="account")tab="home";
- const tabs=U?TABS[U.role]:PUB;document.getElementById("nav").innerHTML=tabs.map(([k,i])=>`<button class="${k==tab?"on":""}" onclick="go('${k}')"><span>${i}</span>${t(k)}</button>`).join("");
- document.getElementById("app").innerHTML=view()}
-render();
+const TABS={student:[["home","🏠"],["subjects","📚"],["book","➕"],["mine","📅"],["asg","📝"],["marks","🏅"]],teacher:[["home","🏠"],["reqs","📥"],["asg","📝"],["mats","📎"],["att","✅"]],admin:[["home","🏠"],["reqs","📥"],["users","🎓"],["news","📢"],["att","✅"]]};
+async function view(){switch(tab){case"home":return vHome();case"subjects":return vSubjects();case"news":return vNews();case"account":return ME?vHome():vAccount();
+ case"book":return vBook();case"mine":case"reqs":return vReqs(tab=="reqs");case"asg":return vAsg();case"marks":return vMarks();case"mats":return vMats();case"att":return vAtt();case"users":return vUsers()}return""}
+let rn=0;
+async function render(){const my=++rn;document.documentElement.lang=L;document.documentElement.dir=L=="ar"?"rtl":"ltr";document.getElementById("title").textContent=t("app");
+ const o=document.getElementById("out");o.textContent=ME?t("logout"):t("login");o.onclick=ME?logout:()=>{mode="login";go("account")};
+ if(!ME&&!["home","subjects","news","account"].includes(tab))tab="home";
+ const tabs=ME?TABS[ME.role]:PUB;document.getElementById("nav").innerHTML=tabs.map(([k,i])=>`<button class="${k==tab?"on":""}" onclick="go('${k}')"><span>${i}</span>${t(k)}</button>`).join("");
+ let h;try{h=await view()}catch(e){console.error(e);h=`<p class="err">${esc(e.message)}</p>`}
+ if(my!=rn)return;document.getElementById("app").innerHTML=h}
+(async()=>{await loadMe();render()})();
 </script></body></html>
