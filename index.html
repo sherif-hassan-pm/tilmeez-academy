@@ -104,7 +104,7 @@ const dubDay=iso=>new Date(iso).toLocaleDateString("sv-SE",{timeZone:"Asia/Dubai
 const dubIn=iso=>new Date(iso).toLocaleString("sv-SE",{timeZone:"Asia/Dubai"}).slice(0,16).replace(" ","T");
 const toIso=v=>new Date(v+":00+04:00").toISOString();
 const sessStu=x=>STUS.filter(p=>!x.audience||x.audience.includes(p.id));
-const sessMsg=(x,name)=>{const tn=nm(x.p),tm=dub(x.starts_at),ti=x.title||t(x.subj),lk=x.meet_link||"";return "مرحباً "+name+"، أهلاً بك في أكاديمية تلميذ! 🌟\nحصتك: "+ti+" مع المعلم "+tn+"\nالوقت: "+tm+" (توقيت الإمارات)"+(lk?"\nرابط الحضور: "+lk:"")+"\n\nHello "+name+", welcome to Tilmeez Academy!\nYour class: "+ti+" with "+tn+"\nTime: "+tm+" (UAE time)"+(lk?"\nJoin link: "+lk:"")};
+const sessMsg=(x,name)=>{const tn=nm(x.p),tm=dub(x.starts_at),ti=x.title||t(x.subj),lk=x.meet_link||"";return "مرحباً "+name+"، أهلاً بك في أكاديمية تلميذ! 🌟\nحصتك: "+ti+" مع المعلم "+tn+"\nالوقت: "+tm+" (توقيت الإمارات)"+(lk?"\nرابط الحضور: "+lk:"")+"\n\nHello "+name+", welcome to Tilmeez Academy!\nYour class: "+ti+" with "+tn+"\nTime: "+tm+" (UAE time)"+(lk?"\nJoin link: "+lk:"")+"\n\nافتح الأكاديمية / Open the academy:\n"+APPURL};
 const waList=x=>sessStu(x).map(p=>CT[p.id]?`<a class="btn sm" style="background:#25d366" href="${esc(waLink(CT[p.id],sessMsg(x,nm(p))))}" target="_blank" rel="noopener">💬 ${esc(nm(p))}</a>`:`<small>${esc(nm(p))}: ${t("noWaS")}</small>`).join(" ")||`<small>-</small>`;
 const addXd=()=>{const d=document.createElement("div");d.className="xdrow";d.innerHTML='<input type="datetime-local" class="xd"> <button type="button" class="btn sm red" onclick="this.parentNode.remove()">✕</button>';document.getElementById("saxs").appendChild(d)};
 const recForm=()=>`<div class="small" style="margin-top:8px">${t("xMore")}</div><div id="saxs"></div><button type="button" class="btn sm alt" onclick="addXd()">${t("xAdd")}</button><label class="small" style="display:block;margin-top:10px"><input style="width:auto;display:inline-block;margin:0 4px" type="checkbox" id="sarp" onchange="document.getElementById('sarb').style.display=this.checked?'block':'none'"> 🔁 ${t("xRep")}</label><div id="sarb" style="display:none"><div class="small">${t("xDays")}</div>${[0,1,2,3,4,5,6].map(i=>`<label class="small" style="display:inline-block;margin:2px 4px;padding:4px 8px;background:#eef2f7;border-radius:12px"><input style="width:auto;display:inline-block;margin:0 4px" type="checkbox" class="sard" value="${i}"> ${t("wd"+i)}</label>`).join("")}<div class="small">${t("xEnd")}</div><select id="saret" onchange="document.getElementById('sarv').style.display=this.value=='c'?'':'none';document.getElementById('sarun').style.display=this.value=='u'?'':'none'"><option value="c">${t("xCnt")}</option><option value="u">${t("xUn")}</option></select><input id="sarv" type="number" min="1" max="60" value="8"><input id="sarun" type="date" style="display:none"></div>`;
@@ -143,12 +143,12 @@ async function loadMe(){const {data:{session}}=await sb.auth.getSession();if(!se
  const {data}=await sb.from("profiles").select("*").eq("id",session.user.id).single();ME=data||null}
 async function doLogin(){msg="";const u=val("un").trim(),p=val("pw");
  const {error}=await sb.auth.signInWithPassword({email:EM(u),password:p});if(error){msg=t("bad");return render()}
- await loadMe();tab="home";render()}
+ await loadMe();tab=dlTab()||"home";render()}
 async function doRegister(){msg="";const u=val("un").trim().toLowerCase(),p=val("pw"),n=val("fn").trim();
  if(!/^[a-z0-9_]{3,20}$/.test(u)){msg=t("baduser");return render()}if(p.length<6){msg=t("short");return render()}
  const {error}=await sb.auth.signUp({email:EM(u),password:p,options:{data:{full_name:n||u}}});
  if(error){msg=/registered|exists/i.test(error.message)?t("taken"):error.message;return render()}
- await loadMe();tab="home";render()}
+ await loadMe();tab=dlTab()||"home";render()}
 async function logout(){await sb.auth.signOut();ME=null;go("home")}
 async function q(p){const {data,error}=await p;if(error){console.error(error);return[]}return data||[]}
 let DIP=null;window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();DIP=e;render()});window.addEventListener("appinstalled",()=>{DIP=null;localStorage.inst="1";render()});
@@ -158,6 +158,8 @@ async function doInstall(){if(DIP){DIP.prompt();await DIP.userChoice;DIP=null;re
 function installCard(){if(isStandalone()||localStorage.inst)return"";
  return `<div class="card" style="border:2px solid var(--y)"><h3>📲 ${t("install")}</h3><small>${t("installTxt")}</small>${DIP?`<br><button class="btn y" onclick="doInstall()">${t("install")}</button>`:`<p class="small">${isIOS()?t("iosHint"):t("desk")}</p>`}</div>`}
 const waNum=n=>{let d=String(n||"").replace(/\D/g,"");if(d.startsWith("00"))d=d.slice(2);else if(d.startsWith("0"))d="971"+d.slice(1);return d};
+const APPURL="https://sherif-hassan-pm.github.io/tilmeez-academy/";
+const dlTab=()=>{const h=location.hash.slice(1);return ME&&TABS[ME.role]&&TABS[ME.role].some(x=>x[0]==h)?h:null};
 const waLink=(n,msg)=>"https://wa.me/"+waNum(n)+"?text="+encodeURIComponent(msg);
 const saveProfile=()=>act(async()=>{const n=val("pn").trim(),w=val("pw2").trim(),em=val("pe").trim();if(em&&!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em))return alert(t("badEm"));if(n){const {error:e1}=await sb.rpc("set_my_name",{p_name:n});if(e1)throw e1}
  const {error}=await sb.from("contacts").upsert({user_id:ME.id,whatsapp:w,email:em||null,updated_at:new Date().toISOString()},{onConflict:"user_id"});if(error)throw error;await loadMe();alert(t("saved"))});
@@ -298,5 +300,5 @@ async function render(){const my=++rn;document.documentElement.lang=L;document.d
  let h;try{h=await view()}catch(e){console.error(e);h=`<p class="err">${esc(e.message)}</p>`}
  if(my!=rn)return;document.getElementById("app").innerHTML=h}
 if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
-(async()=>{await Promise.all([loadMe(),loadConfig()]);render()})();
+(async()=>{await Promise.all([loadMe(),loadConfig()]);const d=dlTab();if(d)tab=d;render()})();
 </script></body></html>
